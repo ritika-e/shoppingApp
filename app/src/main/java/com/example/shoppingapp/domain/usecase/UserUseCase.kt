@@ -1,11 +1,11 @@
 package com.example.shoppingapp.domain.usecase
 
+import android.util.Log
 import com.example.shoppingapp.data.user.UserRepository
 import com.example.shoppingapp.domain.model.User
 import com.example.shoppingapp.domain.repositories.AuthRepository
 
-class UserUseCase(private val authRepository: AuthRepository,
-    private val userRepository: UserRepository) {
+class UserUseCase(private val authRepository: AuthRepository) {
 
     /*suspend fun execute(userId: String): Result<User> {
         return authRepository.getUserData(userId)
@@ -23,11 +23,9 @@ class UserUseCase(private val authRepository: AuthRepository,
                 Result.failure(Exception("Failed to get user name and role"))
             }
         } catch (e: Exception) {
+            Log.e("getUserNameAndRole Error", "Exception in getUserNameAndRole: ${e.message}")
+
             Result.failure(e)
         }
     }
-
-
-
-
 }

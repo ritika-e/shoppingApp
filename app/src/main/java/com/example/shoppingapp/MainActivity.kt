@@ -18,6 +18,7 @@ import com.example.shoppingapp.presentation.auth.SignUpScreen
 import com.example.shoppingapp.presentation.auth.ForgotPasswordScreen
 import com.example.shoppingapp.ui.screen.AddProductScreen
 import com.example.shoppingapp.presentation.splash.SplashScreen
+import com.example.shoppingapp.presentation.user.CartScreen
 import com.example.shoppingapp.presentation.user.CategoryItemsScreen
 import com.example.shoppingapp.presentation.user.CustomerDashboardScreen
 import com.example.shoppingapp.presentation.user.ProductDetailsScreen
@@ -59,11 +60,13 @@ class MainActivity : ComponentActivity() {
                 val productName = backStackEntry.arguments?.getString("productName") ?: ""
                 ProductDetailsScreen(navController,
                     productId = productId,
-                    productName = productName,
-
                     //onBackClick = { navController.navigateUp() },
                     )
             }
+         /*   composable("product_details/{productId}") { backStackEntry ->
+                val productId = backStackEntry.arguments?.getString("productId")?.toInt() ?: 0
+                ProductDetailsScreen(navController, productId)
+            }*/
             composable(
                 "category_items/{categoryID}/{title}",
                 arguments = listOf(navArgument("categoryID") { type = NavType.StringType },
@@ -79,7 +82,13 @@ class MainActivity : ComponentActivity() {
                     onBackClick = { navController.navigateUp() },
                 )
             }
-
+            composable("cart") {
+                CartScreen(navController)
+            }
+           /* composable("order_summary") {
+                OrderSummaryScreen("Order successfully placed!")
+            }
+*/
             composable("admin_dashboard") {
                 AdminDashboardScreen(navController)
             }

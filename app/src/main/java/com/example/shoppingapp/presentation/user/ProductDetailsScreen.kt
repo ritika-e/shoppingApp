@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -54,7 +56,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.shoppingapp.R
-import com.example.shoppingapp.domain.model.CartModel
 import com.example.shoppingapp.domain.model.ItemsModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -63,31 +64,21 @@ import org.koin.androidx.compose.koinViewModel
 fun ProductDetailsScreen(
     navHostController: NavHostController = rememberNavController(),
     productId: Int,
-    productName: String,
     viewModel: ProductDetailsViewModel = koinViewModel(),
     cartViewModel: CartViewModel = koinViewModel()
 
 ) {
+
+    val cartItems by cartViewModel.cartItems.observeAsState(emptyList())
+
     // Observe the product details LiveData
      viewModel.loadProductDetails(productId)
     val productDetails by viewModel.productDetails.observeAsState(null)
 
     // To keep track of cart state
-    val cart by cartViewModel.cart.observeAsState(CartModel())
-    var isInCart by remember { mutableStateOf(false) }
+     var isInCart by remember { mutableStateOf(false) }
     var quantity by remember { mutableStateOf(0) }
 
-
-    // Call the loadProductDetails function when the productId changes
-    LaunchedEffect(productId) {
-        viewModel.loadProductDetails(productId)
-       // if the product is in the cart already
-        val cartItem = cart.items.find { it.productId == productId }
-        if (cartItem != null) {
-            isInCart = true
-            quantity = cartItem.quantity
-        }
-    }
 
     // Show loading state while productDetails is null
     if (productDetails == null) {
@@ -197,76 +188,32 @@ fun ProductDetailsScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // cart add and remove button
-                    if (!isInCart) {
-                        // Show "Add to Cart" button
-                        Button(
-                            onClick = {
-                                cartViewModel.addToCart(productDetails!!)
-                                isInCart = true
-                                quantity = 1  // Set initial quantity to 1
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        ) {
-                            Text("Add to Cart")
-                        }
-                    }else{
-                        // Show quantity buttons (+, -)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ){
-                            IconButton(
-                                onClick = {
-                                    cartViewModel.decrementQuantity(productDetails!!)
-                                    quantity -= 1
-                                }
-                            ) {
-                                Image(painter = painterResource(id = R.drawable.minus_icon), contentDescription = "Remove")
-                            }
-                            Text(
-                                text = quantity.toString(),
-                                style = MaterialTheme.typography.headlineSmall
+                    Button(
+                        onClick = {
+                            /*val product = ItemsModel(productId = 1, title = "Sample Product", price = 100.0)
+                            cartViewModel.addProductToCart(product)*/
+                            val product = ItemsModel(
+                                productId = productDetails!!.productId,
+                                title = productDetails!!.title,
+                                price = productDetails!!.price
                             )
-                            IconButton(
-                                onClick = {
-                                    cartViewModel.incrementQuantity(productDetails!!)
-                                    quantity += 1
-                                }
-                            ) {
-                                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-                            }
-
-                        }
-
-                        if (quantity == 0){
-                            Button(
-                                onClick = {
-                                    cartViewModel.addToCart(productDetails!!)
-                                    isInCart = true
-                                    quantity = 1  // Set initial quantity to 1
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            ) {
-                                Text("Add to Cart")
-                            }
-                            /*Button(onClick = {
-                                cartViewModel.removeFromCart(productDetails!!)
-                                isInCart = false
-                            },
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                                ) {
-                                Text("Remove from Cart")
-                            }*/
-                        }
+                            // Add the product to the cart
+                            cartViewModel.addProductToCart(product)
+                            // Navigate to the Cart screen
+                            navHostController.navigate("cart")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text("Add to Cart")
                     }
+
+                   /* LazyColumn {
+                        items(cartItems) { cartItem ->
+                            CartItemView(cartItem, cartViewModel)
+                        }
+                    }*/
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }

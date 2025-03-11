@@ -47,7 +47,7 @@ fun CategoryItemsScreen(navHostController: NavHostController = rememberNavContro
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(categoryID) {
-        viewModel.loadCategoryFiltered(categoryID)
+        viewModel.loadCategories()
     }
 
     Column(modifier = Modifier.fillMaxSize()) {

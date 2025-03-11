@@ -1,6 +1,5 @@
 package com.example.shoppingapp.presentation.user
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -80,34 +79,50 @@ fun CustomerDashboardScreen(
 
 ) {
 
-    val banners = remember { mutableListOf<SliderModel>() }
+ //   val banners = remember { mutableListOf<SliderModel>() }
     val categories = remember { mutableStateListOf<CategoryModel>() }
     val recommended = remember { mutableStateListOf<ItemsModel>() }
-    var showBannerLoading by remember { mutableStateOf(true) }
+  //  var showBannerLoading by remember { mutableStateOf(true) }
     var showCategoryLoading by remember { mutableStateOf(true) }
     var showRecommendedLoading by remember { mutableStateOf(true) }
 
+   // val banners by productDetailsViewModel.banners.observeAsState(emptyList())
+    val banners by productDetailsViewModel.banners.observeAsState(emptyList()) // Observe banners LiveData
+
+    var showBannerLoading by remember { mutableStateOf(true) }
+
+  //  val authResult = viewModel.authResult.observeAsState()
 
     val isLoggedIn = SharedPreferencesManager.isLoggedIn() // Check if user is logged in
     val userRole = SharedPreferencesManager.getUserRole() // Get user role
     val userName = SharedPreferencesManager.getUserName() // Get user role
+    val userId = SharedPreferencesManager.getUserId() // Get user role
     Log.e("Dashboard","status"+isLoggedIn)
     Log.e("Dashboard","userRole"+userRole)
+    Log.e("Dashboard","userId => $userId")
+
+    Log.d("CustomerDashboardScreen", "Observed banners: $banners")
 
     // Banner
-
     LaunchedEffect(Unit) {
+        productDetailsViewModel.loadBanners() // Load banners when the screen is launched
+    }
+    // When banners are fetched, stop loading
+    if (banners.isNotEmpty()) {
+        showBannerLoading = false
+    }
+   /* LaunchedEffect(Unit) {
         productDetailsViewModel.loadBanners()
         productDetailsViewModel.banners.observeForever{
             banners.clear()
             banners.addAll(it)
             showBannerLoading = false
         }
-    }
+    }*/
 
     // Category
     LaunchedEffect(Unit) {
-        productDetailsViewModel.loadCategory()
+        productDetailsViewModel.loadCategories()
         productDetailsViewModel.categories.observeForever {
             categories.clear()
             categories.addAll(it)
@@ -181,6 +196,7 @@ fun CustomerDashboardScreen(
                         CircularProgressIndicator()
                     }
                 } else {
+                    Log.d("CustomerDashboardScreen", "Displaying banners: $banners")
                     Banners(banners)
                 }
             }
@@ -230,7 +246,9 @@ fun CustomerDashboardScreen(
             .constrainAs(bottomMenu) {
                 bottom.linkTo(parent.bottom)
             },
-            onItemClick = onCartClick
+            onItemClick = { route ->
+                navHostController.navigate(route) // Navigate to the given route
+            }
         )
 
     }
@@ -399,25 +417,25 @@ fun SectionTitle(title:String,actionText:String){
 }
 
 @Composable
-fun BottomMenu(modifier: Modifier,onItemClick: () -> Unit){
+fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
     Row (modifier = modifier
         .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
         .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(10.dp)),
         horizontalArrangement = Arrangement.SpaceAround
     ){
-        BottomMenuItem(icon = Icons.Default.Home, text = "Explorer" )
-        BottomMenuItem(icon = Icons.Default.ShoppingCart, text = "Cart", onItemClick = onItemClick)
-        BottomMenuItem(icon = Icons.Default.Favorite, text = "Favorite")
-        BottomMenuItem(icon = Icons.Default.List, text = "Orders")
-        BottomMenuItem(icon = Icons.Default.Person, text = "Profile")
+        BottomMenuItem(icon = Icons.Default.Home, text = "Explorer", onItemClick = { onItemClick(" ") })
+        BottomMenuItem(icon = Icons.Default.ShoppingCart, text = "Cart", onItemClick = { onItemClick("cart") })
+        BottomMenuItem(icon = Icons.Default.Favorite, text = "Favorite", onItemClick = { onItemClick(" ") })
+        BottomMenuItem(icon = Icons.Default.List, text = "Orders",onItemClick = { onItemClick(" ") })
+        BottomMenuItem(icon = Icons.Default.Person, text = "Profile", onItemClick = { onItemClick("cart") })
     }
 }
 
 @Composable
-fun BottomMenuItem(icon: ImageVector, text:String, onItemClick:(()->Unit)?= null){
+fun BottomMenuItem(icon: ImageVector, text:String, onItemClick:(String)->Unit){
     Column(modifier = Modifier
         .height(60.dp)
-        .clickable { onItemClick?.invoke() }
+        .clickable { onItemClick?.invoke(text) }
         .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
