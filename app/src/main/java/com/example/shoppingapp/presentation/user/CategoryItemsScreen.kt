@@ -1,5 +1,7 @@
 package com.example.shoppingapp.presentation.user
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,6 +28,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.shoppingapp.R
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -44,10 +49,13 @@ fun CategoryItemsScreen(navHostController: NavHostController = rememberNavContro
 ) {
 
     val items by viewModel.recommended.observeAsState(initial = emptyList())
-    var isLoading by remember { mutableStateOf(true) }
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val context:Context = LocalContext.current
+    val errorMessage by viewModel.error.observeAsState()
 
     LaunchedEffect(categoryID) {
-        viewModel.loadCategories()
+        Log.e("Category Item","LOAD $categoryID")
+        viewModel.loadCategoryItem(categoryID)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -63,7 +71,8 @@ fun CategoryItemsScreen(navHostController: NavHostController = rememberNavContro
                 text = title
                 )
 
-            Icon(imageVector = Icons.Sharp.ArrowBack, contentDescription = "Profile",
+            Icon(imageVector = Icons.Sharp.ArrowBack, contentDescription =
+            context.getString(R.string.Remove_btn),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(24.dp)
@@ -78,19 +87,20 @@ fun CategoryItemsScreen(navHostController: NavHostController = rememberNavContro
             )
 
     }
-        if (isLoading){
-            Box (modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center){
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
+                Log.d("CATEGORY", "Loading Products...")
             }
-        }  else{
-            ListItemsFullSize(items = items,navHostController=navHostController)
+        } else if (errorMessage != null) {
+            Text(
+                text = errorMessage ?: "Unknown Error",
+                color = Color.Red,
+            )
+        } else {
+            Log.d("CATEGORY", "Displaying products")
+            ListItemsFullSize(items = items, navHostController = navHostController)
         }
     }
-
-        LaunchedEffect(items) {
-            isLoading=items.isEmpty()
-        }
-
 }
 

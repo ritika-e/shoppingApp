@@ -11,6 +11,7 @@ import com.example.shoppingapp.domain.usecase.productUseCases.CartUseCases
 import com.example.shoppingapp.domain.usecase.productUseCases.PlaceOrderUseCase
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.getKoin
 
 class CartViewModel(private val cartUseCases: CartUseCases,
                     private val placeOrderUseCase: PlaceOrderUseCase
@@ -42,7 +43,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
       }
 
       _cartItems.value = existingCartItems
-      // Persist updated cart (save to a database or repository)
+      // Persist updated cart (save to a database)
       cartUseCases.addProductToCartUseCase.execute(product)
   }
 
@@ -55,7 +56,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
             }
         }
         _cartItems.value = updatedCartItems
-        // Update the cart in the repository or database if necessary
+        // Update the cart in the repository database
         cartUseCases.updateProductQuantityUseCase.execute(productId, newQuantity)
 
     }
@@ -63,12 +64,12 @@ class CartViewModel(private val cartUseCases: CartUseCases,
     fun removeProductFromCart(productId: Int) {
         val updatedCartItems = _cartItems.value?.filter { it.product.productId != productId }
         _cartItems.value = updatedCartItems
-        // Persist cart removal (save to repository or database)
         cartUseCases.removeProductFromCartUseCase.execute(productId)
     }
 
     // Place order function to call the use case
     fun placeOrder() {
+        val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
         val cartItemsList = _cartItems.value ?: emptyList()
 
         Log.d("CartViewModel", "Cart Items: $cartItemsList")
@@ -76,8 +77,9 @@ class CartViewModel(private val cartUseCases: CartUseCases,
         val totalAmount = cartItemsList.sumOf { it.product.price * it.quantity }
         Log.d("CartViewModel", "Total Amount: $totalAmount")
 
-      //  val userId = SharedPreferencesManager.getUserId()
-        val userId = "15oVh6zbJBadejyGrM0eT3EwWKx2"
+        val userId = sharedPreferencesManager.getUserData().userId
+
+       // val userId = "15oVh6zbJBadejyGrM0eT3EwWKx2"
         Log.d("CartViewModel", "User ID: $userId")
 
         if (cartItemsList.isEmpty()) {

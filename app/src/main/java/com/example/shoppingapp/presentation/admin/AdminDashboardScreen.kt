@@ -1,6 +1,7 @@
 package com.example.shoppingapp.presentation.admin
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -67,8 +69,10 @@ import com.example.shoppingapp.ui.theme.LightGreen3
 import com.example.shoppingapp.ui.theme.OrangeYellow1
 import com.example.shoppingapp.ui.theme.OrangeYellow2
 import com.example.shoppingapp.ui.theme.OrangeYellow3
+import com.example.shoppingapp.utils.SharedPreferencesManager
 import com.example.shoppingapp.utils.standardQuadFromTo
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
 fun AdminDashboardScreen(navHostController: NavHostController = rememberNavController()) {
@@ -210,14 +214,23 @@ fun BottomMenuItem(
 
 @Composable
 fun GreetingSection(
-   // name :String = "Admin",
     viewModel: LoginViewModel = koinViewModel(),
     navHostController: NavHostController = rememberNavController(),
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed)
-
-
 ){
-  //  val userName by viewModel.userName.observeAsState("")
+    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
+    val userName = sharedPreferencesManager.getUserData().userName
+    val logoutStatus = viewModel.logoutStatus.observeAsState().value
+    LaunchedEffect(logoutStatus) {
+        if (logoutStatus == "Logged out") {
+            Toast.makeText(navHostController.context, "Logged out successfully", Toast.LENGTH_SHORT).show()
+            navHostController.navigate("login") {
+                popUpTo("admin_dashboard") { inclusive = true }
+            }
+        } else if (logoutStatus != null) {
+            Toast.makeText(navHostController.context, logoutStatus, Toast.LENGTH_SHORT).show()
+        }
+    }
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -226,7 +239,7 @@ fun GreetingSection(
             .padding(15.dp)
     ){
         Column(verticalArrangement = Arrangement.Center) {
-            Text(text = "Good Morning, userName",
+            Text(text = "Welcome Back, $userName",
                 style = MaterialTheme.typography.headlineMedium)
             Text(text = "We wish you have a good day!",
                 style = MaterialTheme.typography.bodyLarge)
@@ -236,10 +249,10 @@ fun GreetingSection(
             modifier = Modifier
                 .size(24.dp)
                 .clickable {
-                   // viewModel.logoutUser()
-                    navHostController.navigate("login") {
-                        popUpTo("customer_dashboard") { inclusive = true }
-                    }
+                    viewModel.logout()
+                    /*navHostController.navigate("login") {
+                        popUpTo("admin_dashboard") { inclusive = true }
+                    }*/
                 }
         )
     }

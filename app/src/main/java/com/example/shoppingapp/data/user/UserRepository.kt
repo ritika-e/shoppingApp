@@ -4,7 +4,7 @@ import com.example.shoppingapp.utils.SharedPreferencesManager
 
 class UserRepository(private val sharedPreferencesManager: SharedPreferencesManager) {
 
-    fun getUserName(): String? {
+   /* fun getUserName(): String? {
         return sharedPreferencesManager.getUserName()
     }
 
@@ -14,5 +14,5 @@ class UserRepository(private val sharedPreferencesManager: SharedPreferencesMana
 
     fun saveUserData(userName: String, userRole: String) {
         sharedPreferencesManager.saveUserData(userName, userRole)
-    }
+    }*/
 }

@@ -39,6 +39,7 @@ import com.example.shoppingapp.presentation.common.CommonTextField
 import com.example.shoppingapp.presentation.common.CommonDialog
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
 fun LoginScreen(
@@ -46,32 +47,69 @@ fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel()  // Koin ViewModel injection
 ) {
 
+    val context:Context = LocalContext.current
     // observe states from viewModel
-    val loginStatus by viewModel.loginStatus.observeAsState()
     val isLoading by viewModel.isLoading.observeAsState(false)
-    val isLoggedIn by viewModel.isLoggedIn.observeAsState(false)
+  //  val isLoggedIn by viewModel.isLoggedIn.observeAsState(false)
 
+    val loginSuccess by remember { mutableStateOf(false) }
 
+    val loginStatus by viewModel.loginStatus.observeAsState()
     var showDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    LaunchedEffect(isLoggedIn) {
+
+   /* LaunchedEffect(loginStatus) {
+        val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
+        val role = sharedPreferencesManager.getUserData().userRole
+        if (isLoggedIn) {
+            // Show a Toast message when login is successful
+            when (role) {
+                "admin" -> {
+                    navHostController.navigate("admin_dashboard") {
+                        popUpTo("splash_screen") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+                "customer" -> {
+                    navHostController.navigate("customer_dashboard") {
+                        popUpTo("splash_screen") { inclusive = true }
+                        launchSingleTop = true
+
+                    }
+                }
+                else -> {
+                    // Handle case where role is undefined (e.g., redirect to login)
+                    navHostController.navigate("login")
+                }
+            }
+        } else if (loginStatus != null) {
+            // Show an error message in case of login failure
+           // Toast.makeText(navHostController.context, loginStatus, Toast.LENGTH_SHORT).show()
+          //  val exception = result.exceptionOrNull()
+           // errorMessage = exception?.message ?: "Login Failed"
+            showDialog = true
+        }
+    }
+*/
+
+   /* LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             // Navigate to the customer dashboard
             navHostController.navigate("customer_dashboard") {
                 popUpTo("login") { inclusive = true } // Remove the login screen from back stack
             }
         }
-    }
+    }*/
 
-
+    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     // If loginStatus is not null, observe its state
-   /* loginStatus?.let { result ->
+   loginStatus?.let { result ->
         if (result.isSuccess) {
-             val role = SharedPreferencesManager.getUserRole() ?: "user"
-            val userName = SharedPreferencesManager.getUserName() ?: "user"
+            val role = sharedPreferencesManager.getUserData().userRole
+
             // Navigate based on role
-            if (role == "admin") {
+            if (role == context.getString(R.string.admin_txt)) {
                 navHostController.navigate("admin_dashboard") {
                     popUpTo("login") { inclusive = true }
                     launchSingleTop = true
@@ -85,11 +123,11 @@ fun LoginScreen(
             }
         } else {
             val exception = result.exceptionOrNull()
-            errorMessage = exception?.message ?: "Login Failed"
+            errorMessage = exception?.message ?: context.getString(R.string.Login_failed_txt)
             showDialog = true
         }
     }
-*/    // Show dialog if there's an error message
+   // Show dialog if there's an error message
    /* if (showDialog) {
         CommonDialog(
             showDialog = showDialog,
@@ -109,7 +147,7 @@ fun LoginScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(id = R.drawable.login_img),
-                contentDescription = "Login an account",
+                contentDescription = context.getString(R.string.Login_des_txt),
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.TopStart)
@@ -125,8 +163,8 @@ fun LoginScreen(
             CommonTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = "user Email",
-                label = "User Email"
+                placeholder = context.getString(R.string.Email_txt),
+                label = context.getString(R.string.Email_txt)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -134,8 +172,9 @@ fun LoginScreen(
             CommonTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = "Enter password",
-                label = "Enter password"
+                placeholder = context.getString(R.string.Password_txt),
+                label = context.getString(R.string.Password_txt),
+                isPassword = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -146,7 +185,7 @@ fun LoginScreen(
                     .clickable {
                         navHostController.navigate("forgetPass")
                     },
-                text = "Forget Password?",
+                text = context.getString(R.string.Forget_pass_txt),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -157,7 +196,7 @@ fun LoginScreen(
                 CircularProgressIndicator() // Show loading spinner
             } else {
                 CommonButton(
-                    text = "Login",
+                    text = context.getString(R.string.Login_btn),
                     onClick = {
                         viewModel.login(email, password)
                     },
@@ -165,15 +204,21 @@ fun LoginScreen(
                 )
             }
 
+            if (loginSuccess) {
+                navHostController.navigate("customer_dashboard") {
+                    popUpTo("login") { inclusive = true } // Remove the login screen from back stack
+                }
+             }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             if (showDialog) {
                 CommonDialog(
                     showDialog = showDialog,
                     onDismiss = { showDialog = false },
-                    title = "Error",
+                    title = context.getString(R.string.Error_txt),
                     message = errorMessage,
-                    confirmButtonText = "OK",
+                    confirmButtonText = context.getString(R.string.Ok_txt),
                     onConfirm = { showDialog = false }
                 )
             }
@@ -182,7 +227,7 @@ fun LoginScreen(
                 modifier = Modifier.clickable {
                     navHostController.navigate("signUp")
                 },
-                text = "Create an Account Sign Up",
+                text = context.getString(R.string.Sign_up_txt),
                 color = MaterialTheme.colorScheme.primary
             )
         }

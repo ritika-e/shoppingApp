@@ -18,7 +18,7 @@ class MyApplication : Application() {
             androidContext(this@MyApplication)
             modules(appModule)
         }
-        SharedPreferencesManager.init(applicationContext)
+        SharedPreferencesManager(applicationContext)
       //  SharedPreferencesManager.init(this)
     }
 }

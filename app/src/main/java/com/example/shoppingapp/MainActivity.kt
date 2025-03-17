@@ -47,8 +47,7 @@ class MainActivity : ComponentActivity() {
                     /*backStackEntry ->
                 val userName = backStackEntry.arguments?.getString("userName")*/
                 CustomerDashboardScreen(
-                    navController,
-                    onCartClick = {})
+                    navController)
             }
             composable("product_details/{productId}/{productName}",
                 arguments = listOf(

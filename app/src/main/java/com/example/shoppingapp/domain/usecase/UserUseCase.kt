@@ -7,13 +7,9 @@ import com.example.shoppingapp.domain.repositories.AuthRepository
 
 class UserUseCase(private val authRepository: AuthRepository) {
 
-    /*suspend fun execute(userId: String): Result<User> {
-        return authRepository.getUserData(userId)
-    }*/
-
     suspend fun execute(): Result<Pair<String?, String?>> {
         return try {
-            // Call the repository method
+            // Calling the repository method
             val result = authRepository.getUserNameAndRole()
 
             // Check if the result is null or not

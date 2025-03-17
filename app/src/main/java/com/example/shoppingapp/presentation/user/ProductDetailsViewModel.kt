@@ -5,35 +5,52 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.domain.model.CategoryModel
 import com.example.shoppingapp.domain.model.ItemsModel
 import com.example.shoppingapp.domain.model.SliderModel
 import com.example.shoppingapp.domain.usecase.productUseCases.GetBannersUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoriesUseCase
+import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoryItemUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetProductDetailsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetRecommendedProductsUseCase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
 
 
 class ProductDetailsViewModel(
     private val getProductDetailsUseCase: GetProductDetailsUseCase,
     private val getRecommendedProductsUseCase: GetRecommendedProductsUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getCategoryItemUseCase: GetCategoryItemUseCase,
     private val getBannersUseCase: GetBannersUseCase
 ) : ViewModel() {
 
     private val _category = MutableLiveData<List<CategoryModel>>()
-    val categories: LiveData<List<CategoryModel>> = _category
+    val categories: MutableLiveData<List<CategoryModel>> = _category
 
-   private val _banner = MutableLiveData<List<SliderModel>>(emptyList()) // Initialize with an empty list
+    private val _banner =
+        MutableLiveData<List<SliderModel>>(emptyList()) // Initialize with an empty list
     val banners: LiveData<List<SliderModel>> = _banner
-
-   // val banners: State<List<SliderModel>> = _banners
 
     private val _recommended = MutableLiveData<List<ItemsModel>>()
     val recommended: LiveData<List<ItemsModel>> = _recommended
 
     private val _productDetails = MutableLiveData<ItemsModel?>()
     val productDetails: LiveData<ItemsModel?> = _productDetails
+
+    // LiveData for error messages
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> get() = _error
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+
 
     fun loadProductDetails(productId: Int) {
         getProductDetailsUseCase.execute(productId).observeForever { product ->
@@ -60,4 +77,20 @@ class ProductDetailsViewModel(
         }
     }
 
+    fun loadCategoryItem(categoryId: String) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            val result = getCategoryItemUseCase.execute(categoryId)
+
+            _isLoading.value = false
+
+            result.onSuccess {
+                _recommended.value = it
+            }
+
+            result.onFailure { exception ->
+                _error.value = "Error loading items: ${exception.localizedMessage}"
+            }
+        }
+    }
 }

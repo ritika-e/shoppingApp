@@ -5,8 +5,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -107,7 +105,9 @@ fun AddProductScreen(
         // Add Product Button
         Button(
             onClick = {
-                if (productName.isNotEmpty() && productDescription.isNotEmpty() && productPrice.isNotEmpty() && productCategory.isNotEmpty() && productImageUri != null) {
+                if (productName.isNotEmpty() && productDescription.isNotEmpty()
+                    && productPrice.isNotEmpty() && productCategory.isNotEmpty()
+                    && productImageUri != null) {
                     isLoading = true
                     // Prepare the product data
                    /* val product = Product(

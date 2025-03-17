@@ -1,3 +1,54 @@
 <resources>
     <string name="app_name">Shopping App</string>
+    <string name="Error_txt">Error</string>
+    <string name="Ok_txt">OK</string>
+    <string name="Login_btn">Login</string>
+    <string name="Sign_up_txt">Create an Account Sign Up</string>
+    <string name="Login_failed_txt">Login Failed</string>
+    <string name="Sign_up_failed_txt">Sign up Failed</string>
+    <string name="Login_des_txt">Login an account</string>
+    <string name="Email_txt">User Email</string>
+    <string name="Password_txt">Enter password</string>
+    <string name="Confirm_pass_txt">Confirm Password</string>
+    <string name="Forget_pass_txt">Forget Password?</string>
+    <string name="create_acc_txt">Create an account</string>
+    <string name="User_name_txt">User Name</string>
+    <string name="Select_role_txt">Select Role</string>
+    <string name="Customer_txt">customer</string>
+    <string name="admin_txt">admin</string>
+    <string name="Signup_btn">Create Account</string>
+    <string name="password_error">Passwords does not match</string>
+    <string name="already_have_acc_txt">I already have an Account Login</string>
+    <string name="Welcome_txt">Welcome Back</string>
+    <string name="See_all_txt">See All</string>
+    <string name="Categories_txt">Categories</string>
+    <string name="Recommendation_txt">Recommendation</string>
+    <string name="Home_txt">Home</string>
+    <string name="Cart_txt">Cart</string>
+    <!--<string name="Favorite_txt">Favorite</string>-->
+    <string name="Orders_txt">Orders</string>
+    <string name="Profile_txt">Profile</string>
+    <string name="email_validation_txt">Email cannot be empty</string>
+    <string name="Invalid_email_txt">Invalid email format</string>
+    <string name="Reset_pass_txt">Reset password</string>
+    <string name="Enter_email_txt">Enter your email</string>
+    <string name="Reset_txt">We will send you a message to set or reset your new password.</string>
+    <string name="Reset_msg_txt">Password reset email sent</string>
+    <string name="Reset_fail_msg_txt">Failed to send password reset email</string>
+    <string name="back_to_login_txt">Back to Login</string>
+    <string name="Logged_out_txt">Logged out</string>
+    <string name="Log_out_msg_txt">Logged out successfully</string>
+    <string name="Banner_txt">Banner</string>
+    <string name="Back_txt">Back</string>
+    <string name="cart_empty_txt">Your cart is empty</string>
+    <string name="Place_order_btn">Place Order</string>
+    <string name="Decrement_btn">Decrement</string>
+    <string name="Increment_btn">Increment</string>
+    <string name="Remove_btn">Remove</string>
+    <string name="Rating_txt">Rating</string>
+    <string name="Product_details_txt">Product Details</string>
+    <string name="Add_to_cart_btn">Add to Cart</string>
+    <string name="error_txt">An error occurred</string>
+
+
 </resources>

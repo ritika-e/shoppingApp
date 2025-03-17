@@ -1,5 +1,6 @@
 package com.example.shoppingapp.presentation.user
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,10 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.shoppingapp.R
 import com.example.shoppingapp.domain.model.CartItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -52,6 +55,7 @@ fun CartScreen(
     navController: NavHostController,
     cartViewModel: CartViewModel = koinViewModel()
 ) {
+    val context:Context = LocalContext.current
     // Observe the cart items
     val cartItems by cartViewModel.cartItems.observeAsState(emptyList())
     val orderStatus by cartViewModel.orderStatus.observeAsState("")
@@ -66,10 +70,11 @@ fun CartScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Cart") },
+                title = { Text(text = context.getString(R.string.Cart_txt)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
                     }
                 }
             )
@@ -78,7 +83,7 @@ fun CartScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (cartItems!!.isEmpty()) {
                     Text(
-                        text = "Your cart is empty",
+                        text = context.getString(R.string.cart_empty_txt),
                         modifier = Modifier
                             .fillMaxSize()
                             .wrapContentSize(Alignment.Center)
@@ -99,7 +104,7 @@ fun CartScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text("Place Order")
+                        Text(context.getString(R.string.Place_order_btn))
                     }
 
                     // Show order status (success or failure message)
@@ -124,8 +129,9 @@ fun CartItemView(
     // Handle the increase and decrease actions for quantity
     var quantity by remember { mutableStateOf(cartItem.quantity) }
 
-    // Handle the image loading (make sure cartItem.imageUrl is correct)
+    // Handle the image loading
     val imageUrl = cartItem.product.picUrl ?: "default_image_url"
+    val context:Context = LocalContext.current
 
     // Cart item view layout
     Row(
@@ -170,7 +176,8 @@ fun CartItemView(
                     cartViewModel.updateProductQuantity(cartItem.product.productId, quantity)
                 }
             }) {
-                Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "Decrement")
+                Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription =
+                context.getString(R.string.Decrement_btn))
             }
 
             Text(
@@ -183,7 +190,8 @@ fun CartItemView(
                 quantity++
                 cartViewModel.updateProductQuantity(cartItem.product.productId, quantity)
             }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Increment")
+                Icon(imageVector = Icons.Filled.Add, contentDescription =
+                context.getString(R.string.Increment_btn))
             }
         }
 
@@ -191,7 +199,8 @@ fun CartItemView(
         IconButton(onClick = {
             cartViewModel.removeProductFromCart(cartItem.product.productId)
         }) {
-            Icon(imageVector = Icons.Filled.Delete, contentDescription = "Remove")
+            Icon(imageVector = Icons.Filled.Delete, contentDescription =
+            context.getString(R.string.Remove_btn))
         }
     }
 }

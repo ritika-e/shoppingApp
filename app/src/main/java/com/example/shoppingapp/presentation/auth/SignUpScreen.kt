@@ -36,7 +36,9 @@ import com.example.shoppingapp.presentation.common.CommonTextField
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import com.example.shoppingapp.presentation.common.CommonDialog
+import com.example.shoppingapp.utils.SharedPreferencesManager
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.getKoin
 import kotlin.Result
 
 
@@ -44,9 +46,11 @@ import kotlin.Result
 @Composable
 fun SignUpScreen(
     navHostController: NavHostController = rememberNavController(),
-    viewModel: SignupViewModel = koinViewModel(),
-    context: Context = LocalContext.current) {
+    viewModel: SignupViewModel = koinViewModel()) {
 
+    val context:Context = LocalContext.current
+
+    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     // Observe states from viewModel
     val isSignedUp by viewModel.isSignedUp.observeAsState(initial = false)
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
@@ -57,15 +61,26 @@ fun SignUpScreen(
     var dialogMessage by remember { mutableStateOf<String?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
+
     // Handle sign up result
     signUpStatus?.let { result ->
         if (result.isSuccess) {
-            val name = result.getOrNull() // Gets the user ID (on success)
-            dialogMessage = "Signed up successfully, User Name: $name"
-            showDialog = true
+            val role = sharedPreferencesManager.getUserData().userRole
+            if (role == context.getString(R.string.admin_txt)) {
+                navHostController.navigate("admin_dashboard") {
+                    popUpTo("login") { inclusive = true }
+                    launchSingleTop = true
+                }
+
+            } else {
+                navHostController.navigate("customer_dashboard"){
+                    popUpTo("login") { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
         } else {
             val exception = result.exceptionOrNull() // Gets the exception (on failure)
-            dialogMessage = exception?.message ?: "Unknown error"
+            dialogMessage = exception?.message ?: context.getString(R.string.Sign_up_failed_txt)
             showDialog = true
             //viewModel.showDialog.value = true
         }
@@ -73,7 +88,7 @@ fun SignUpScreen(
 
     LaunchedEffect(isSignedUp) {
         if (isSignedUp) {
-             if (viewModel.role == "admin") {
+             if (viewModel.role == context.getString(R.string.admin_txt)) {
                  navHostController.navigate("admin_dashboard") {
                     popUpTo("signUp") { inclusive = true }
                 }
@@ -100,7 +115,7 @@ fun SignUpScreen(
         ){
             Image(
                 painter = painterResource(id = R.drawable.create_an_account),
-                contentDescription = "Create an account",
+                contentDescription = context.getString(R.string.create_acc_txt),
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.TopStart)
@@ -115,15 +130,15 @@ fun SignUpScreen(
             CommonTextField(
                 value = name,
                 onValueChange = { name = it },
-                placeholder = "User Name",
-                label = "User Name"
+                placeholder = context.getString(R.string.User_name_txt),
+                label = context.getString(R.string.User_name_txt)
             )
             Spacer(modifier = Modifier.height(16.dp))
             CommonTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = "User Email",
-                label = "Email"
+                placeholder = context.getString(R.string.Email_txt),
+                label = context.getString(R.string.Email_txt)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -131,8 +146,8 @@ fun SignUpScreen(
             CommonTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = "Password",
-                placeholder = "Password",
+                label = context.getString(R.string.Password_txt),
+                placeholder = context.getString(R.string.Password_txt),
                 isPassword = true
             )
 
@@ -141,26 +156,26 @@ fun SignUpScreen(
             CommonTextField(
                 value = confirmPass,
                 onValueChange = { confirmPass = it },
-                placeholder = "Confirm Password",
-                label = "Confirm Password",
+                placeholder = context.getString(R.string.Confirm_pass_txt),
+                label = context.getString(R.string.Confirm_pass_txt),
                 isPassword = true
             )
 
             Spacer(modifier = Modifier.height(32.dp))
             // Role selection (Customer / Admin)
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Select Role")
+                Text(text = context.getString(R.string.Select_role_txt))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
-                        selected = role == "customer",
-                        onClick = { role = "customer" })
-                    Text("Customer", modifier = Modifier
+                        selected = role == context.getString(R.string.Customer_txt),
+                        onClick = { role = context.getString(R.string.Customer_txt) })
+                    Text(context.getString(R.string.Customer_txt), modifier = Modifier
                         .padding(start = 8.dp)
                         .weight(1F))
-                    RadioButton(selected = role == "admin",
-                        onClick = {  role = "admin" })
-                    Text("Admin", modifier = Modifier
+                    RadioButton(selected = role == context.getString(R.string.admin_txt),
+                        onClick = {  role = context.getString(R.string.admin_txt) })
+                    Text(context.getString(R.string.admin_txt), modifier = Modifier
                         .padding(start = 8.dp)
                         .weight(1F))
                 }
@@ -180,13 +195,13 @@ fun SignUpScreen(
                 CircularProgressIndicator() // Show loading spinner
             } else {
             CommonButton(
-                text = "Create Account",
+                text = context.getString(R.string.Signup_btn),
 
                 onClick = {
                     if (password == confirmPass) {
                     viewModel.signUp(name,email,password,role)
                 }else{
-                        dialogMessage = "Passwords does not match"
+                        dialogMessage = context.getString(R.string.password_error)
                         showDialog = true
                 }
 
@@ -202,9 +217,9 @@ fun SignUpScreen(
                 CommonDialog(
                     showDialog = showDialog,
                     onDismiss = {  showDialog = false },
-                    title = "Error",
+                    title = context.getString(R.string.Error_txt),
                     message = dialogMessage ?: "",
-                    confirmButtonText = "OK",
+                    confirmButtonText = context.getString(R.string.Ok_txt),
                     onConfirm = {  showDialog = false }
                 )
             }
@@ -213,7 +228,7 @@ fun SignUpScreen(
                 modifier = Modifier.clickable {
                     navHostController.navigate("login")
                 },
-                text = "I already have an Account Login",
+                text = context.getString(R.string.already_have_acc_txt),
                 color = MaterialTheme.colorScheme.primary)
         }
     }

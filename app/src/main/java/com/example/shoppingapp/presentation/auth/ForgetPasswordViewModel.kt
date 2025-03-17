@@ -1,5 +1,6 @@
 package com.example.shoppingapp.presentation.auth
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,39 +9,24 @@ import com.example.shoppingapp.domain.usecase.ResetPasswordUseCase
 import kotlinx.coroutines.launch
 
 class ForgetPasswordViewModel(private val resetPasswordUseCase: ResetPasswordUseCase):ViewModel() {
+    private val _resetResult = MutableLiveData<Boolean?>()
+    val resetResult: LiveData<Boolean?> get() = _resetResult
 
-     // LiveData for tracking the password reset state
-     var resetPasswordState = MutableLiveData<ResetPasswordState>()
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> get() = _error
 
-    private var isSuccessHandled = false
-    fun sendPasswordResetEmail(email: String) {
-        if (email.isBlank()) {
-            resetPasswordState.postValue(ResetPasswordState.Error("Email cannot be empty"))
-            return
-        }
-        resetPasswordState.postValue(ResetPasswordState.Loading)
+    // Handle the password reset request
+    fun resetPassword(email: String) {
         viewModelScope.launch {
-           // var isSuccessHandled = false
             try {
-                 resetPasswordUseCase.execute(email)
-                if (!isSuccessHandled){
-                    resetPasswordState.postValue(ResetPasswordState.Success("Password reset email sent successfully"))
-                    isSuccessHandled = true
+                val result = resetPasswordUseCase.execute(email)
+                _resetResult.postValue(result)
+                if (!result) {
+                    _error.postValue("Failed to send password reset email.")
                 }
-                //resetPasswordState.postValue(ResetPasswordState.Success("Password reset email sent successfully"))
-             } catch (e: Exception) {
-
-                resetPasswordState.postValue(ResetPasswordState.Error("Error: ${e.message}"))
-
-
+            } catch (e: Exception) {
+                _error.postValue("Error occurred: ${e.message}")
             }
         }
-    }
-
-
-    sealed class ResetPasswordState {
-        object Loading : ResetPasswordState()
-        data class Success(val message: String) : ResetPasswordState()
-        data class Error(val message: String) : ResetPasswordState()
     }
 }

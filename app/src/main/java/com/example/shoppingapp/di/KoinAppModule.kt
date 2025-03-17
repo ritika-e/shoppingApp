@@ -22,6 +22,7 @@ import com.example.shoppingapp.domain.usecase.productUseCases.CartUseCases
 import com.example.shoppingapp.domain.usecase.productUseCases.GetBannersUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCartItemsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoriesUseCase
+import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoryItemUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetProductDetailsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetRecommendedProductsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.PlaceOrderUseCase
@@ -38,6 +39,7 @@ import com.example.shoppingapp.utils.SharedPreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -56,7 +58,7 @@ val appModule = module{
     single { AuthService() }
 
     // SharedPref
-    single { SharedPreferencesManager }
+    single { SharedPreferencesManager (androidApplication())}
 
     // Repository
     single<AuthRepository> { AuthRepositoryImpl(get(),get())  }
@@ -88,13 +90,14 @@ val appModule = module{
     single { UpdateProductQuantityUseCase(get()) }
     single { PlaceOrderUseCase(get()) }
     single { GetCurrentUserIdUseCase(get()) }
+    single { GetCategoryItemUseCase(get()) }
 
     // viewModel
     viewModel { SplashViewModel() }
-    viewModel { LoginViewModel(get(),get(),get()) }
+    viewModel { LoginViewModel(get(),get()) }
     viewModel { SignupViewModel(get()) }
     viewModel { ForgetPasswordViewModel(get()) }
     viewModel { ProductViewModel() }
-    viewModel { ProductDetailsViewModel(get(), get(), get(), get()) }
+    viewModel { ProductDetailsViewModel(get(), get(), get(),get() ,get()) }
     viewModel { CartViewModel(get(),get()) }
 }
