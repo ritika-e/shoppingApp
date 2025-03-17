@@ -2,6 +2,7 @@ package com.example.shoppingapp.presentation.user
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -26,7 +27,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
@@ -70,44 +70,61 @@ import com.example.shoppingapp.domain.model.SliderModel
 import com.example.shoppingapp.presentation.auth.LoginViewModel
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
 fun CustomerDashboardScreen(
     navHostController: NavHostController = rememberNavController(),
     viewModel: LoginViewModel = koinViewModel(),
-    productDetailsViewModel: ProductDetailsViewModel = koinViewModel(),
-    onCartClick:()->Unit,
-
+    productDetailsViewModel: ProductDetailsViewModel = koinViewModel()
 ) {
-
-    val banners = remember { mutableListOf<SliderModel>() }
+    val context:Context = LocalContext.current
     val categories = remember { mutableStateListOf<CategoryModel>() }
     val recommended = remember { mutableStateListOf<ItemsModel>() }
-    var showBannerLoading by remember { mutableStateOf(true) }
     var showCategoryLoading by remember { mutableStateOf(true) }
     var showRecommendedLoading by remember { mutableStateOf(true) }
 
+    val banners by productDetailsViewModel.banners.observeAsState(emptyList()) // Observe banners LiveData
 
-    val isLoggedIn = SharedPreferencesManager.isLoggedIn() // Check if user is logged in
-    val userRole = SharedPreferencesManager.getUserRole() // Get user role
-    val userName = SharedPreferencesManager.getUserName() // Get user role
-    Log.e("Dashboard","status"+isLoggedIn)
-    Log.e("Dashboard","userRole"+userRole)
+    var showBannerLoading by remember { mutableStateOf(true) }
+    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
+    val userName = sharedPreferencesManager.getUserData().userName
+    val logoutStatus = viewModel.logoutStatus.observeAsState().value
+
+    LaunchedEffect(logoutStatus) {
+        if (logoutStatus == context.getString(R.string.Logged_out_txt)) {
+            Toast.makeText(navHostController.context,context.getString(R.string.Log_out_msg_txt),
+                Toast.LENGTH_SHORT).show()
+            navHostController.navigate("login") {
+                popUpTo("customer_dashboard") { inclusive = true }
+            }
+        } else if (logoutStatus != null) {
+            Toast.makeText(navHostController.context, logoutStatus, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    Log.d("CustomerDashboardScreen", "Observed banners: $banners")
 
     // Banner
-
     LaunchedEffect(Unit) {
+        productDetailsViewModel.loadBanners() // Load banners when the screen is launched
+    }
+    // When banners are fetched, stop loading
+    if (banners.isNotEmpty()) {
+        showBannerLoading = false
+    }
+   /* LaunchedEffect(Unit) {
         productDetailsViewModel.loadBanners()
         productDetailsViewModel.banners.observeForever{
             banners.clear()
             banners.addAll(it)
             showBannerLoading = false
         }
-    }
+    }*/
 
     // Category
     LaunchedEffect(Unit) {
-        productDetailsViewModel.loadCategory()
+        productDetailsViewModel.loadCategories()
         productDetailsViewModel.categories.observeForever {
             categories.clear()
             categories.addAll(it)
@@ -148,23 +165,21 @@ fun CustomerDashboardScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text(text = "Welcome Back", color = Color.Black)
+                        Text(text = context.getString(R.string.Welcome_txt), color = Color.Black)
 
                         Text(
                             text = "$userName!", color = Color.Black,
                             fontSize = 18.sp, fontWeight = FontWeight.Bold
                         )
                     }
-                    Icon(imageVector = Icons.Sharp.ExitToApp, contentDescription = "Profile",
+                    Icon(imageVector = Icons.Sharp.ExitToApp,
+                        contentDescription = context.getString(R.string.Profile_txt),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
                                 // Log out the user
-                               viewModel.logout()
-                                navHostController.navigate("login"){
-                                    popUpTo("customer_dashboard") { inclusive = true}
-                                }
+                              viewModel.logout()
                             }
                     )
                 }
@@ -181,11 +196,12 @@ fun CustomerDashboardScreen(
                         CircularProgressIndicator()
                     }
                 } else {
+                    Log.d("CustomerDashboardScreen", "Displaying banners: $banners")
                     Banners(banners)
                 }
             }
             item {
-                SectionTitle("Categories", "See All")
+                SectionTitle(context.getString(R.string.Categories_txt), context.getString(R.string.See_all_txt))
             }
             item {
                 if (showCategoryLoading) {
@@ -202,7 +218,8 @@ fun CustomerDashboardScreen(
                 }
             }
             item {
-                SectionTitle("Recommendation", "See All")
+                SectionTitle(context.getString(R.string.Recommendation_txt),
+                    context.getString(R.string.See_all_txt))
             }
             item {
                 if (showRecommendedLoading) {
@@ -222,19 +239,17 @@ fun CustomerDashboardScreen(
             item {
                 Spacer(modifier = Modifier.height(100.dp))
             }
-
-
         }
         BottomMenu(modifier = Modifier
             .fillMaxWidth()
             .constrainAs(bottomMenu) {
                 bottom.linkTo(parent.bottom)
             },
-            onItemClick = onCartClick
+            onItemClick = { route ->
+                navHostController.navigate(route)
+            }
         )
-
     }
-
 }
 
 @Composable
@@ -256,11 +271,11 @@ fun CategoryList(
                     isSelected = selectedIndex == index,
                     onItemClick = {
                         selectedIndex=index
-                       navHostController.navigate("category_items/${categories[index].id}/${categories[index].title}")
+                       navHostController.navigate(
+                         "category_items/${categories[index].id}/${categories[index].title}")
                     })
             }
     }
-
 }
 
 @Composable
@@ -309,8 +324,8 @@ fun AutoSlidingCarousel(
     banners: List<SliderModel>,
     pagerState: PagerState = rememberPagerState(pageCount = {banners.size}),
 ){
+    val context:Context = LocalContext.current
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
-
     Column(modifier = modifier.fillMaxSize()) {
 
         HorizontalPager(state = pagerState) {
@@ -320,7 +335,8 @@ fun AutoSlidingCarousel(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(banners[page].url)
                     .build(),
-                contentDescription = "Banner", contentScale = ContentScale.FillBounds,
+                contentDescription = context.getString(R.string.Banner_txt),
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
                     .height(150.dp))
@@ -381,9 +397,7 @@ fun IndicatorDot(modifier: Modifier = Modifier,
             .clip(CircleShape)
             .background(color)
     ) {
-
     }
-
 }
 @Composable
 fun SectionTitle(title:String,actionText:String){
@@ -399,25 +413,30 @@ fun SectionTitle(title:String,actionText:String){
 }
 
 @Composable
-fun BottomMenu(modifier: Modifier,onItemClick: () -> Unit){
+fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
+    val context:Context = LocalContext.current
     Row (modifier = modifier
         .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
         .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(10.dp)),
         horizontalArrangement = Arrangement.SpaceAround
     ){
-        BottomMenuItem(icon = Icons.Default.Home, text = "Explorer" )
-        BottomMenuItem(icon = Icons.Default.ShoppingCart, text = "Cart", onItemClick = onItemClick)
-        BottomMenuItem(icon = Icons.Default.Favorite, text = "Favorite")
-        BottomMenuItem(icon = Icons.Default.List, text = "Orders")
-        BottomMenuItem(icon = Icons.Default.Person, text = "Profile")
+        BottomMenuItem(icon = Icons.Default.Home,
+            text = context.getString(R.string.Home_txt), onItemClick = { onItemClick(" ") })
+        BottomMenuItem(icon = Icons.Default.ShoppingCart,
+            text = context.getString(R.string.Cart_txt), onItemClick = { onItemClick("cart") })
+        /*BottomMenuItem(icon = Icons.Default.Favorite, text = "Favorite", onItemClick = { onItemClick(" ") })*/
+        BottomMenuItem(icon = Icons.Default.List,
+            text = context.getString(R.string.Orders_txt), onItemClick = { onItemClick(" ") })
+        BottomMenuItem(icon = Icons.Default.Person,
+            text = context.getString(R.string.Profile_txt), onItemClick = { onItemClick("cart") })
     }
 }
 
 @Composable
-fun BottomMenuItem(icon: ImageVector, text:String, onItemClick:(()->Unit)?= null){
+fun BottomMenuItem(icon: ImageVector, text:String, onItemClick:(String)->Unit){
     Column(modifier = Modifier
         .height(60.dp)
-        .clickable { onItemClick?.invoke() }
+        .clickable { onItemClick.invoke(text) }
         .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

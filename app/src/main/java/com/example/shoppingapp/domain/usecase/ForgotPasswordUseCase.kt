@@ -4,7 +4,7 @@ import com.example.shoppingapp.domain.repositories.AuthRepository
 
 class ResetPasswordUseCase(private val authRepository: AuthRepository) {
 
-    suspend fun execute(email: String) {
-         //authRepository.resetPassword(email)
-    }
+   suspend fun execute(email: String): Boolean {
+       return authRepository.sendPasswordResetEmail(email)
+   }
 }

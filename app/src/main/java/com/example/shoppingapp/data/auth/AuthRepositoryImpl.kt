@@ -6,8 +6,16 @@ import com.example.shoppingapp.domain.model.User
 import com.example.shoppingapp.domain.repositories.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore
@@ -20,12 +28,49 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
         role: String
     ): Result<String> {
         return try {
+             val result = fireBaseAuth.createUserWithEmailAndPassword(email, password).await()
+            // Create user object
+            val user = result.user
+            val userId = user?.uid ?: throw Exception("Unknown Error: User not created")
+
+             try {
+                storeUserInFirestore(userId, name, email, role)
+            } catch (e: FirebaseFirestoreException) {
+                 Log.e("FirestoreError", "Error storing user data in Firestore: ${e.message}")
+                return Result.failure(Exception("Error storing user data. Please try again."))
+            }
+            // Return the UID of the user if successfully created
+            Result.success(userId)
+
+        } catch (e: FirebaseAuthUserCollisionException) {
+             Log.e("FirebaseAuthError", "User already exists with this email: ${e.message}")
+            return Result.failure(Exception("An account with this email already exists. Please try a different one."))
+        } catch (e: FirebaseAuthWeakPasswordException) {
+            Log.e("FirebaseAuthError", "Weak password: ${e.message}")
+            return Result.failure(Exception("The password is too weak. Please choose a stronger password."))
+        } catch (e: FirebaseAuthException) {
+            // Handle other Firebase authentication errors (e.g., invalid email, network issues)
+            Log.e("FirebaseAuthError", "Authentication error: ${e.message}")
+            return Result.failure(Exception("Authentication failed. Please check your input and try again."))
+        } catch (e: Exception) {
+            // Catch any unexpected errors
+            Log.e("SignUpError", "Unexpected error: ${e.message}")
+            return Result.failure(Exception("An unexpected error occurred. Please try again later."))
+        }
+    }
+   /* override suspend fun signUp(
+        name: String,
+        email: String,
+        password: String,
+        role: String
+    ): Result<String> {
+        return try {
             // Firebase Authentication
             val result = fireBaseAuth.createUserWithEmailAndPassword(email, password).await()
 
             // Create user object
             val user = result.user
-            val userId = user?.uid ?: throw Exception("Unknown Error")
+            val userId = user?.uid ?: throw Exception("Unknown Error: User not created")
             // Store the user data in Firestore
             storeUserInFirestore(userId, name, email, role)
 
@@ -34,7 +79,7 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
             Result.failure(e)
         }
     }
-
+*/
     // Store user data in Firestore
     private suspend fun storeUserInFirestore(
         userId: String,
@@ -53,68 +98,86 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
         }
     }
 
-    /*override suspend fun getUserData(userId: String): Result<User> {
-        return try {
-            val document = firestore.collection("users")
-                .document(userId)
-                .get()
-                .await()
-
-            if (document.exists()) {
-                val userId = document.getString("userId") ?: "No Name"
-                val userName = document.getString("name") ?: "No Name"
-                val role = document.getString("role") ?: "No Role"
-                val email = document.getString("email") ?: "No Email"
-                Result.success(User(userId,userName,email, role))
-            } else {
-                Result.failure(Exception("No such user"))
-            }
-        } catch (exception: Exception) {
-            Result.failure(exception)
-        }
-    }
-*/
-    /* override suspend fun login(email: String, password: String): Result<String> {
-        return try {
-            // Sign in the user with email and password
-            val authResult = fireBaseAuth.signInWithEmailAndPassword(email, password).await()
-            val userId = authResult.user?.uid  // Get the user ID after successful login
-
-            if (userId != null) {
-                Result.success(userId)  // Return user ID on success
-            } else {
-                Result.failure(Exception("Authentication failed"))  // If no user ID, return failure
-            }
-        } catch (e: Exception) {
-            Result.failure(e)  // Return failure in case of an error
-        }
-    }*/
-
-
-
 
     override suspend fun login(email: String, password: String): Result<String> {
         return try {
             // Sign in the user with email and password
             val authResult = fireBaseAuth.signInWithEmailAndPassword(email, password).await()
-            val uid = authResult.user?.uid ?: throw Exception("Authentication failed")
-
+            val user = authResult.user
+            if (user == null) {
+                Log.e("LoginError", "User object is null. Authentication failed.")
+                throw Exception("Authentication failed: User object is null.")
+            }
+           // val uid = authResult.user?.uid ?: throw Exception("Authentication failed")
+            //val userName = authResult.user?.displayName ?: throw Exception("Authentication failed")
             // Return the UID of the authenticated user
+            val uid = user.uid
+            val userName = user.displayName ?: "Unnamed user"
             Result.success(uid)
-         } catch (e: Exception) {
-            Result.failure(e)  // Return failure result in case of error
-        }
-    }
-
-    override suspend fun resetPassword(email: String) {
-        try {
-            fireBaseAuth.sendPasswordResetEmail(email).await()
+         } catch (e: FirebaseAuthInvalidUserException) {
+            // User not found or invalid email/password combination
+            Log.e("FirebaseAuthError", "Invalid user: ${e.message}")
+            Result.failure(Exception("Invalid email or password. Please try again."))
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            // Invalid credentials, password might be wrong
+            Log.e("FirebaseAuthError", "Invalid credentials: ${e.message}")
+            Result.failure(Exception("Incorrect password. Please try again."))
         } catch (e: FirebaseAuthException) {
-            throw Exception("Failed to send reset password email: ${e.message}")
+            // Other Firebase Authentication errors (e.g., network issues, service errors)
+            val errorCode = e.errorCode
+            val errorMessage = e.message
+            Log.e("FirebaseAuthError", "Error code: $errorCode, Message: $errorMessage")
+            Result.failure(Exception("Login failed: $errorMessage"))
+        } catch (e: Exception) {
+            // Catch any other unexpected exceptions
+            Log.e("LoginError", "Unexpected error: ${e.message}")
+            Result.failure(Exception("An unexpected error occurred."))
         }
     }
+   /*
+   WORKING
+   override suspend fun login(email: String, password: String): Result<FirebaseUser> {
+       return withContext(Dispatchers.IO){
+           try {
+               val authResult = fireBaseAuth.signInWithEmailAndPassword(email, password).await()
+               authResult.user?.let {
+                   Result.success(it) // Success, return FirebaseUser
+               } ?: Result.failure(Exception("User not found"))
+           } catch (e: FirebaseAuthInvalidCredentialsException) {
+               // Invalid credentials error
+               Result.failure(Exception("Invalid credentials. Please check your password."))
+           } catch (e: FirebaseAuthInvalidUserException) {
+               // Invalid user error
+               Result.failure(Exception("No account found with this email."))
+           } catch (e: Exception) {
+               // General exception handler
+               Result.failure(Exception("Authentication failed. Please try again later."))
+           }
+   }
 
-    override suspend fun getUserName(): String? {
+   }
+*/
+    override suspend fun getCurrentUser(): FirebaseUser? {
+        return fireBaseAuth.currentUser
+    }
+
+    override suspend fun logout() {
+        fireBaseAuth.signOut()
+    }
+
+
+   override suspend fun sendPasswordResetEmail(email: String): Boolean {
+       return try {
+           fireBaseAuth.sendPasswordResetEmail(email).await()
+           true
+       } catch (e: Exception) {
+           false
+       }
+   }
+
+
+
+    override suspend fun getUserName(userId: String): String? {
         val currentUser = fireBaseAuth.currentUser
         return currentUser?.let {
             try {
@@ -131,17 +194,15 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
 
     }
 
-    override suspend fun getUserRole(userId: String): String? {
-        return try {
-            val document = firestore.collection("users")
-                .document(userId)
-                .get()
-                .await()
+    override suspend fun getUserRole(userId: String): String {
+        val userDocument = firestore
+            .collection("users")
+            .document(userId)
+            .get()
+            .await()
 
-            return document.getString("role")
-        } catch (e: Exception) {
-            null // Or handle error if needed
-        }
+        // Get role from Firestore document (assuming the field is named 'role')
+        return userDocument.getString("role") ?: "customer" // Default role is "customer" if not found
     }
 
     override suspend fun getUserData(userId: String): Result<User> {
@@ -177,91 +238,4 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
             }
         }
     }
-
 }
-
-
-    /*override suspend fun signUp(email: String, password: String, role: String): Boolean {
-        return authService.signUp(email, password, role)
-    }*/
-    /* override suspend fun signUp(user: User, password: String): Result<String> {
-         return try {
-             val authResult = fireBaseAuth.createUserWithEmailAndPassword(user.email, password).await()
-             val uid = authResult.user?.uid ?: throw Exception("Authentication failed")
-             firestore.collection("users").document(uid).set(user).await()
-             Result.success(uid)
-         } catch (e: Exception) {
-             Result.failure(e)
-         }
-     }
-*/
-
-    /*override suspend fun registerUser(name:String,email:String, password:String,role:String){
-        authService.registerUser(name,email, password,role)
-    }*/
-
-
-    /* override suspend fun loginUser(email: String,password: String){
-        authService.loginUser(email, password)
-    }
-
-    override fun getCurrentUserId(): String? {
-        return authService.getCurrentUserId() // Get current user ID from Firebase
-    }
-    override fun isUserLoggedIn(): Boolean {
-        return authService.isUserLoggedIn() // Check if the user is logged in
-    }
-
-  override  fun logoutUser() = authService.logoutUser()
-
-    override suspend fun resetPassword(email: String) {
-        authService.resetPassword(email)
-    }*/
-
-
-    /*override suspend fun getUserRole(userId: String): String? {
-        return try {
-            // Fetch the user document from Firestore
-            val userDoc = firestore.collection("users").document(userId).get().await()
-            Log.e("UserRepository 40", "User document does not exist for userId: $userId")
-            // Check if the document exists
-            if (userDoc.exists()) {
-                Log.e("UserRepository", " IF")
-                // Get the role field from the document
-                userDoc.getString("role")
-            } else {
-                Log.e("UserRepository", "User document does not exist for userId: $userId")
-                null // If document doesn't exist, return null
-            }
-        } catch (e: Exception) {
-            // Handle any exceptions that may occur during the query
-            Log.e("UserRepository", "Error fetching user role: ${e.message}")
-            null
-        }
-    }*/
-
-
-   /* override suspend fun getUserNameAndRole(): Pair<String?, String?>? {
-        val currentUserId = fireBaseAuth.getCurrentUserId()
-
-        if (currentUserId != null) {
-            try {
-                val userDoc = .collection("users").document(currentUserId).get().await()
-                Log.e("Firebase Data", "" + userDoc.id)
-                if (userDoc.exists()) {
-                    val name = userDoc.getString("name")
-                    val role = userDoc.getString("role")
-                    Log.e("Firebase Data", "" + name)
-                    Log.e("Firebase Data", "" + role)
-                    return Pair(name, role) // Return both name and role as a Pair
-                }
-            } catch (e: Exception) {
-                // Handle any errors
-                Log.e("UserRepository", "Error fetching user data", e)
-            }
-        }
-        return null // Return null if user is not found or there is an error
-    }*/
-
-
-

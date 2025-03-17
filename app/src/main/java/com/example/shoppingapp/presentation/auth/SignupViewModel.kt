@@ -12,10 +12,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.domain.usecase.SignUpUseCase
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.getKoin
 import kotlin.Result
 
 class SignupViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
-
+    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     // State for form fields
     var name by mutableStateOf("")
     var email by mutableStateOf("")
@@ -47,7 +48,7 @@ class SignupViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
            if (result.isSuccess) {
                // Save user data in SharedPreferences after successful sign-up
                val userId = result.getOrNull() ?: return@launch
-               SharedPreferencesManager.saveUserData(name, role)
+               sharedPreferencesManager.saveUserData(userId, name ?: "", role )
                _isSignedUp.value = true
                _isLoading.value = false
            }else{

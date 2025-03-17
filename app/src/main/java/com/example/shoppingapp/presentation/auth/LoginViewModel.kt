@@ -7,14 +7,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.auth.AuthRepositoryImpl
 import com.example.shoppingapp.domain.repositories.AuthRepository
 import com.example.shoppingapp.domain.usecase.LoginUseCase
 import com.example.shoppingapp.domain.usecase.UserUseCase
 import com.example.shoppingapp.utils.SharedPreferencesManager
-import com.example.shoppingapp.utils.SharedPreferencesManager.isLoggedIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.getKoin
 import kotlin.Result
 import java.io.IOException
 
@@ -26,14 +28,13 @@ import java.io.IOException
  */
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
-    private val userUseCase: UserUseCase,
-    private val sharedPreferencesManager: SharedPreferencesManager
-
-
+    private val userUseCase: UserUseCase
 ) : ViewModel() {
+
+    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     // LiveData to hold login status (loading, success, failure)
-    private val _loginStatus = MutableLiveData<Result<String>>()
-    val loginStatus: LiveData<Result<String>> get() = _loginStatus
+    private val _loginStatus = MutableLiveData<Result<String>?>()
+    val loginStatus: LiveData<Result<String>?> = _loginStatus
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -52,24 +53,57 @@ class LoginViewModel(
 
     val showDialog = MutableLiveData(false)
 
+    private val _logoutStatus = MutableLiveData<String?>()
+    val logoutStatus: LiveData<String?> = _logoutStatus
+
+    val user = liveData(Dispatchers.IO) {
+        val currentUser = loginUseCase.getCurrentUser()
+        emit(currentUser)
+    }
+
     // Function to handle login action
-    fun login(email: String, password: String) {
-            _isLoading.value = true
-            viewModelScope.launch {
-                try {
-                    loginUseCase.invoke(email, password)
-                    getUserNameAndRole()
-                    _isLoggedIn.value = true // Set to true if login is successful
-                    _isLoading.value = false
-                    Log.e("Login Status", _isLoggedIn.value.toString() )
-                } catch (exception: Exception) {
-                    _isLoggedIn.value = false
-                    _error.value = exception.message ?: "Login Failed"
-                    _isLoading.value = false
-                }
+
+    fun login(email:String, password:String) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            val result = loginUseCase(email, password)
+            _loginStatus.value = result  // Assign the Result from use case
+            if (result.isSuccess) {
+                val userId = result.getOrNull() ?: return@launch // If failed, exit the coroutine early
+                val role = loginUseCase.invoke(userId)
+                val useName = loginUseCase.getUserName(userId)
+                Log.e("USER DATA"," $userId $role $useName")
+                sharedPreferencesManager.saveUserData(userId, useName ?: "", role )
+                _isLoggedIn.value = true
+                _isLoading.value = false
+            }else{
+                val exception = result.exceptionOrNull()
+                Log.e("LoginError", "Login failed: ${exception?.message}")
+                _isLoading.value = false
+            }
 
         }
     }
+
+   /*
+   WORKING FINE
+   fun login(email: String, password: String) = viewModelScope.launch (Dispatchers.IO) {
+       val user = try {
+           loginUseCase.login(email, password)
+       } catch (e: Exception) {
+           null
+       }
+
+       if (user != null) {
+         //  val role = getUserRoleFromFirestore(user.uid)
+           val role = loginUseCase.invoke(user.uid)
+           // Save user data in SharedPreferences on successful login
+           sharedPreferencesManager.saveUserData(user.uid, user.displayName ?: "", role )
+           _loginStatus.postValue("Login successful")
+       } else {
+           _loginStatus.postValue("Login failed")
+       }
+   }*/
 
     private fun getUserNameAndRole() {
         viewModelScope.launch {
@@ -82,7 +116,7 @@ class LoginViewModel(
                 _userName.value = name
                 _userRole.value = role
 
-                saveUserDetailsToSharedPreferences(name, role)
+             //   saveUserDetailsToSharedPreferences(name, role)
                 Log.e("userNAME 73", name.toString() )
                 Log.e("userNAME 73", role.toString() )
                // Log.e("userNAME 73", _userName.value!!.sec().toString() )
@@ -92,41 +126,18 @@ class LoginViewModel(
         }
     }
 
-    private fun saveUserDetailsToSharedPreferences(userName: String?, userRole: String?) {
-
-       /* if (userName != null && userRole != null) {
-            SharedPreferencesManager.saveUserData( userName, userRole)
-        }*/
-        userName?.let { name ->
-            userRole?.let { role ->
-                sharedPreferencesManager.saveUserData(name, role)
+    fun logout(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                loginUseCase.logout()  // Firebase sign-out
+                sharedPreferencesManager.clearUserData()  // Clear SharedPreferences
+                _logoutStatus.postValue("Logged out")
+            } catch (e: Exception) {
+                _logoutStatus.postValue("Logout failed: ${e.message}")
             }
         }
 
-        val isLoggedIn = sharedPreferencesManager.isLoggedIn() // Check if user is logged in
-        val userRole = sharedPreferencesManager.getUserRole() // Get user role
-        Log.e("Login ","status"+isLoggedIn)
-        Log.e("Login","userRole"+userRole)
     }
-
-    fun getUserDetailsFromSharedPreferences(): Pair<String?, String?> {
-        val userName = sharedPreferencesManager.getUserName()
-        val userRole = sharedPreferencesManager.getUserRole()
-        return Pair(userName, userRole)
-    }
-
-
-
-
-
-    // Function to handle logout
-    fun logout() {
-        viewModelScope.launch {
-            SharedPreferencesManager.clearUserData()
-            _isLoggedIn.value = false
-        }
-    }
-
 
 }
 

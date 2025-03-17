@@ -1,5 +1,7 @@
 package com.example.shoppingapp.presentation.user
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,7 +46,9 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.domain.model.ItemsModel
 
 @Composable
-fun ListItems (items:List<ItemsModel>,navHostController: NavHostController = rememberNavController()){
+fun ListItems (
+    items:List<ItemsModel>,navHostController: NavHostController = rememberNavController()
+){
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -65,7 +69,10 @@ fun ListItems (items:List<ItemsModel>,navHostController: NavHostController = rem
 }
 
 @Composable
-fun ListItemsFullSize (items:List<ItemsModel>,navHostController: NavHostController = rememberNavController()){
+fun ListItemsFullSize (items:List<ItemsModel>,
+                       navHostController: NavHostController = rememberNavController()
+){
+    Log.d("ListItemsFullSize","ListItemsFullSize Executed")
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -74,6 +81,7 @@ fun ListItemsFullSize (items:List<ItemsModel>,navHostController: NavHostControll
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        Log.d("ListItemsFullSize","ListItemsFullSize ${items.size}")
         items(items.size){ row ->
             Row (modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -87,7 +95,9 @@ fun ListItemsFullSize (items:List<ItemsModel>,navHostController: NavHostControll
 
 @Composable
 fun RecommendedItem(items: List<ItemsModel>, pos:Int,
-                    navHostController: NavHostController = rememberNavController()){
+                    navHostController: NavHostController = rememberNavController()
+){
+    val context:Context = LocalContext.current
     Column(modifier = Modifier
         .padding(8.dp)
         .height(225.dp)
@@ -99,7 +109,8 @@ fun RecommendedItem(items: List<ItemsModel>, pos:Int,
                 .height(175.dp)
                 .padding(8.dp)
                 .clickable {
-                    navHostController.navigate("product_details/${items[pos].productId}/${items[pos].title}")
+                    navHostController.navigate("product_details/${items[pos].productId}" +
+                            "/${items[pos].title}")
                    /* navHostController.navigate("product_detail/${items[pos].categoryId}" +
                             "/${items[pos].title}/${items[pos].description}/${items[pos].price}" +
                             "/${items[pos].picUrl}/${items[pos].rating}")*/
@@ -121,7 +132,7 @@ fun RecommendedItem(items: List<ItemsModel>, pos:Int,
             Row {
                 Icon(
                     imageVector = Icons.Filled.Star, // Predefined icon
-                    contentDescription = "Rating",
+                    contentDescription = context.getString(R.string.Rating_txt),
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.width(8.dp))

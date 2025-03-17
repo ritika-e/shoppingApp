@@ -1,5 +1,6 @@
 package com.example.shoppingapp.presentation.user
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -54,7 +57,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.shoppingapp.R
-import com.example.shoppingapp.domain.model.CartModel
 import com.example.shoppingapp.domain.model.ItemsModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -63,31 +65,13 @@ import org.koin.androidx.compose.koinViewModel
 fun ProductDetailsScreen(
     navHostController: NavHostController = rememberNavController(),
     productId: Int,
-    productName: String,
     viewModel: ProductDetailsViewModel = koinViewModel(),
     cartViewModel: CartViewModel = koinViewModel()
-
 ) {
     // Observe the product details LiveData
      viewModel.loadProductDetails(productId)
     val productDetails by viewModel.productDetails.observeAsState(null)
-
-    // To keep track of cart state
-    val cart by cartViewModel.cart.observeAsState(CartModel())
-    var isInCart by remember { mutableStateOf(false) }
-    var quantity by remember { mutableStateOf(0) }
-
-
-    // Call the loadProductDetails function when the productId changes
-    LaunchedEffect(productId) {
-        viewModel.loadProductDetails(productId)
-       // if the product is in the cart already
-        val cartItem = cart.items.find { it.productId == productId }
-        if (cartItem != null) {
-            isInCart = true
-            quantity = cartItem.quantity
-        }
-    }
+    val context:Context = LocalContext.current
 
     // Show loading state while productDetails is null
     if (productDetails == null) {
@@ -112,11 +96,12 @@ fun ProductDetailsScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(text = "Product Details")
+                        Text(text = context.getString(R.string.Product_details_txt))
                     },
                     navigationIcon = {
                         IconButton(onClick = { navHostController.navigateUp() }) {
-                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = context.getString(R.string.Back_txt))
                         }
                     }
                 )
@@ -177,7 +162,7 @@ fun ProductDetailsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Star,
-                                contentDescription = "Product Rating",
+                                contentDescription = context.getString(R.string.Rating_txt),
                                 tint = Color.Yellow
                             )
                             Spacer(modifier = Modifier.width(4.dp))
@@ -197,76 +182,32 @@ fun ProductDetailsScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // cart add and remove button
-                    if (!isInCart) {
-                        // Show "Add to Cart" button
-                        Button(
-                            onClick = {
-                                cartViewModel.addToCart(productDetails!!)
-                                isInCart = true
-                                quantity = 1  // Set initial quantity to 1
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        ) {
-                            Text("Add to Cart")
-                        }
-                    }else{
-                        // Show quantity buttons (+, -)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ){
-                            IconButton(
-                                onClick = {
-                                    cartViewModel.decrementQuantity(productDetails!!)
-                                    quantity -= 1
-                                }
-                            ) {
-                                Image(painter = painterResource(id = R.drawable.minus_icon), contentDescription = "Remove")
-                            }
-                            Text(
-                                text = quantity.toString(),
-                                style = MaterialTheme.typography.headlineSmall
+                    Button(
+                        onClick = {
+                            /*val product = ItemsModel(productId = 1, title = "Sample Product", price = 100.0)
+                            cartViewModel.addProductToCart(product)*/
+                            val product = ItemsModel(
+                                productId = productDetails!!.productId,
+                                title = productDetails!!.title,
+                                price = productDetails!!.price
                             )
-                            IconButton(
-                                onClick = {
-                                    cartViewModel.incrementQuantity(productDetails!!)
-                                    quantity += 1
-                                }
-                            ) {
-                                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-                            }
-
-                        }
-
-                        if (quantity == 0){
-                            Button(
-                                onClick = {
-                                    cartViewModel.addToCart(productDetails!!)
-                                    isInCart = true
-                                    quantity = 1  // Set initial quantity to 1
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            ) {
-                                Text("Add to Cart")
-                            }
-                            /*Button(onClick = {
-                                cartViewModel.removeFromCart(productDetails!!)
-                                isInCart = false
-                            },
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                                ) {
-                                Text("Remove from Cart")
-                            }*/
-                        }
+                            // Add the product to the cart
+                            cartViewModel.addProductToCart(product)
+                            // Navigate to the Cart screen
+                            navHostController.navigate("cart")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(context.getString(R.string.Add_to_cart_btn))
                     }
+
+                   /* LazyColumn {
+                        items(cartItems) { cartItem ->
+                            CartItemView(cartItem, cartViewModel)
+                        }
+                    }*/
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -275,173 +216,3 @@ fun ProductDetailsScreen(
     }
 
 }
-   /* Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Product Image
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(productImageUrl)
-                .crossfade(true)
-                .build(),
-            contentDescription = "Product Image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.Gray)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Product Name
-        Text(
-            text = productName,
-            style = TextStyle(
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Product Description
-        Text(
-            text = productDescription,
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Product Rating (Stars)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            for (i in 1..5) {
-                Icon(
-                    imageVector = if (i <= productRating.toInt()) Icons.Default.Star else Icons.Default.Star,
-                    contentDescription = "Rating Star",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "$productRating",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Product Price
-        Text(
-            text = "$${"%.2f".format(productPrice)}",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Add to Cart Button
-        Button(
-            onClick = { *//* Handle add to cart *//* },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(
-                text = "Add to Cart",
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun ProductDetailScreenPreview() {
-    ProductDetailsScreen(
-        productName = "Awesome Product",
-        productDescription = "This is a very cool product with amazing features.",
-        productPrice = 99.99F,
-        productRating = 4.5f,
-        productImageUrl = "https://via.placeholder.com/300"
-    )*/
-
-/*
-@Composable
-fun ProductDetailsScreen(navHostController: NavHostController = rememberNavController(),
-                         viewModel: ProductDetailsViewModel = koinViewModel(),
-                         onBackClick:()->Unit,
-                         onAddToCartClick:() -> Unit,
-                         onCartClick:()->Unit
-) {
-   */
-/* var selectedImageUrl by remember {
-        mutableStateOf(item.picUrl.first())
-    }*//*
-
-
-    var selectedModelIndex by remember { mutableStateOf(-1) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-            ConstraintLayout (
-                modifier = Modifier
-                    .padding(top = 24.dp, bottom = 16.dp)
-                    .fillMaxWidth()
-            ){
-                val (back,fav) = createRefs()
-                Icon(imageVector = Icons.Sharp.ArrowBack, contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            onBackClick()
-                        }
-                        .constrainAs(back) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                        }
-                )
-                Icon(imageVector = Icons.Sharp.Favorite, contentDescription = "Favorite",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            onBackClick()
-                        }
-                        .constrainAs(fav) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                        }
-                )
-            }
-    }
-}*/
