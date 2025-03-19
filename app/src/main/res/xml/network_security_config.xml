@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext traffic for all domains -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">firebasestorage.googleapis.com</domain>
+        <domain includeSubdomains="true">firebaseapp.com</domain>  <!-- Firebase main domain -->
+        <domain includeSubdomains="true">firebaseio.com</domain>   <!-- Firebase Realtime Database domain -->
+        <domain includeSubdomains="true">googleapis.com</domain>  <!-- Google APIs used by Firebase -->
+        <!-- You can add any other domains you interact with -->
+    </domain-config>
+</network-security-config>
