@@ -36,50 +36,34 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
              try {
                 storeUserInFirestore(userId, name, email, role)
             } catch (e: FirebaseFirestoreException) {
+                 val errorMessage = e.message
                  Log.e("FirestoreError", "Error storing user data in Firestore: ${e.message}")
-                return Result.failure(Exception("Error storing user data. Please try again."))
+                return Result.failure(Exception("Error storing user data. Please try again. $errorMessage"))
             }
             // Return the UID of the user if successfully created
             Result.success(userId)
 
         } catch (e: FirebaseAuthUserCollisionException) {
+            val errorMessage = e.message
              Log.e("FirebaseAuthError", "User already exists with this email: ${e.message}")
             return Result.failure(Exception("An account with this email already exists. Please try a different one."))
         } catch (e: FirebaseAuthWeakPasswordException) {
+            val errorMessage = e.message
             Log.e("FirebaseAuthError", "Weak password: ${e.message}")
             return Result.failure(Exception("The password is too weak. Please choose a stronger password."))
         } catch (e: FirebaseAuthException) {
             // Handle other Firebase authentication errors (e.g., invalid email, network issues)
+            val errorMessage = e.message
             Log.e("FirebaseAuthError", "Authentication error: ${e.message}")
-            return Result.failure(Exception("Authentication failed. Please check your input and try again."))
+            return Result.failure(Exception("Authentication failed. $errorMessage"))
         } catch (e: Exception) {
             // Catch any unexpected errors
+            val errorMessage = e.message
             Log.e("SignUpError", "Unexpected error: ${e.message}")
-            return Result.failure(Exception("An unexpected error occurred. Please try again later."))
+            return Result.failure(Exception("An unexpected error occurred. Please try again later. $errorMessage"))
         }
     }
-   /* override suspend fun signUp(
-        name: String,
-        email: String,
-        password: String,
-        role: String
-    ): Result<String> {
-        return try {
-            // Firebase Authentication
-            val result = fireBaseAuth.createUserWithEmailAndPassword(email, password).await()
 
-            // Create user object
-            val user = result.user
-            val userId = user?.uid ?: throw Exception("Unknown Error: User not created")
-            // Store the user data in Firestore
-            storeUserInFirestore(userId, name, email, role)
-
-            Result.success(result.user?.uid ?: "Unknown Error")
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-*/
     // Store user data in Firestore
     private suspend fun storeUserInFirestore(
         userId: String,
@@ -100,6 +84,7 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
 
 
     override suspend fun login(email: String, password: String): Result<String> {
+
         return try {
             // Sign in the user with email and password
             val authResult = fireBaseAuth.signInWithEmailAndPassword(email, password).await()
@@ -108,8 +93,6 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
                 Log.e("LoginError", "User object is null. Authentication failed.")
                 throw Exception("Authentication failed: User object is null.")
             }
-           // val uid = authResult.user?.uid ?: throw Exception("Authentication failed")
-            //val userName = authResult.user?.displayName ?: throw Exception("Authentication failed")
             // Return the UID of the authenticated user
             val uid = user.uid
             val userName = user.displayName ?: "Unnamed user"
@@ -120,8 +103,9 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
             Result.failure(Exception("Invalid email or password. Please try again."))
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             // Invalid credentials, password might be wrong
+            val errorMessage = e.message
             Log.e("FirebaseAuthError", "Invalid credentials: ${e.message}")
-            Result.failure(Exception("Incorrect password. Please try again."))
+            Result.failure(Exception("Invalid credentials $errorMessage"))
         } catch (e: FirebaseAuthException) {
             // Other Firebase Authentication errors (e.g., network issues, service errors)
             val errorCode = e.errorCode
@@ -130,8 +114,9 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
             Result.failure(Exception("Login failed: $errorMessage"))
         } catch (e: Exception) {
             // Catch any other unexpected exceptions
+            val errorMessage = e.message
             Log.e("LoginError", "Unexpected error: ${e.message}")
-            Result.failure(Exception("An unexpected error occurred."))
+            Result.failure(Exception("$errorMessage"))
         }
     }
    /*

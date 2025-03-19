@@ -1,6 +1,7 @@
 package com.example.shoppingapp.presentation.splash
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,19 +36,22 @@ fun SplashScreen(navHostController: NavHostController = rememberNavController(),
       //  if (isLoggedIn) {
             // If logged in, navigate to respective dashboard based on role
             when (role) {
-                context.getString(R.string.admin_txt) -> {
+                "admin" -> {
+                    Log.e("Splash Screen ","admin => $role")
                     navHostController.navigate("admin_dashboard") {
                         popUpTo("splash_screen") { inclusive = true }
                         launchSingleTop = true
                     }
                 }
-                context.getString(R.string.Customer_txt) -> {
+                "customer" -> {
+                    Log.e("Splash Screen ","customer => $role")
                     navHostController.navigate("customer_dashboard") {
                         popUpTo("splash_screen") { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 else -> {
+                    Log.e("Splash Screen ","else => $role")
                     // Handle case where role is undefined (e.g., redirect to login)
                     navHostController.navigate("login"){
                         popUpTo("splash_screen") { inclusive = true }

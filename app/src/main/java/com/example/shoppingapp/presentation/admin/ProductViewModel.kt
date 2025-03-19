@@ -2,56 +2,53 @@ package com.example.shoppingapp.presentation.admin
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.shoppingapp.domain.model.ItemsModel
+import com.example.shoppingapp.domain.model.ProductList
+import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
+import com.example.shoppingapp.domain.usecase.admin.AddProductUseCase
+import com.example.shoppingapp.domain.usecase.admin.DeleteProductUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetAllProductsUseCase
+import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import kotlinx.coroutines.launch
 
-class ProductViewModel() : ViewModel() {
+class ProductViewModel(
+    private val addProductUseCase: AddProductUseCase,
+    private val updateProductUseCase: UpdateProductUseCase,
+    private val deleteProductUseCase: DeleteProductUseCase,
+    private val getAllProductsUseCase: GetAllProductsUseCase,
+    private val fbProductRepository: FirebaseProductRepository,
+) : ViewModel() {
 
-  /*  private val _products = MutableLiveData<List<Product>>()
-    val products: LiveData<List<Product>> get() = _products
+    private val _imageUploadProgress = MutableLiveData<Float>()
+    val imageUploadProgress: LiveData<Float> get() = _imageUploadProgress
 
-    private val _productsWithImages = MutableLiveData<List<ProductWithImage>>()
-    val productsWithImages: LiveData<List<ProductWithImage>> get() = _productsWithImages
+    private val _productUploadStatus = MutableLiveData<Boolean>()
+    val productUploadStatus: LiveData<Boolean> get() = _productUploadStatus
 
-    fun loadProducts() {
+    private val _products = MutableLiveData<List<ProductList>>()
+    val products: LiveData<List<ProductList>> get() = _products
+
+    var selectedImageUri: Uri? by mutableStateOf(null)
+
+    fun addProductWithImage(
+        product: ProductList,
+        selectedImageUri: Uri,
+        onProgress: (Float) -> Unit,
+        onComplete: (Boolean) -> Unit
+    ) {
         viewModelScope.launch {
-            val result = productUseCase.getAllProducts()
-            _products.postValue(result)
+            addProductUseCase.execute(
+                product = product.copy(picUrl = selectedImageUri.toString()),
+                onProgress = onProgress,
+                onComplete = onComplete
+            )
         }
     }
-
-    fun addProduct(product: Product, productImage: ProductImage) {
-        viewModelScope.launch {
-            val result = productUseCase.addProduct(product, productImage)
-            if (result.isSuccess) {
-                loadProducts()  // Refresh the list after adding
-            }else {
-                // Handle failure
-            }
-        }
-    }
-
-    fun fetchProducts() {
-        viewModelScope.launch {
-            try {
-                val products = productUseCase.getProductsWithImages()
-                _productsWithImages.value = products
-                Log.d("ProductViewModel", "Fetched products with images: ${products.size}")
-            } catch (e: Exception) {
-                Log.e("ProductViewModel", "Error fetching products: ${e.message}")
-                // Handle errors, like showing a message to the user
-            }
-        }
-    }
-
-    fun deleteProduct(productId: String) {
-        viewModelScope.launch {
-            val result = productUseCase.deleteProduct(productId)
-            if (result.isSuccess) {
-                loadProducts()  // Refresh the list after deleting
-            }
-        }
-    }*/
 }

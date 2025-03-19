@@ -10,7 +10,7 @@ class SharedPreferencesManager(context: Context) {
 
     fun saveUserData(userId: String, userName: String, userRole: String) {
         val editor = sharedPreferences.edit()
-        Log.e("User","USer not Null => $userId $userName $userRole")
+        Log.e("User SharedPref","USer not Null => $userId $userName $userRole")
         editor.putString("user_id", userId)
         editor.putString("user_name", userName)
         editor.putString("user_role", userRole)

@@ -102,7 +102,7 @@ fun RecommendedItem(items: List<ItemsModel>, pos:Int,
         .padding(8.dp)
         .height(225.dp)
     ) {
-        AsyncImage(model = items[pos].picUrl.firstOrNull(), contentDescription =items[pos].title,
+        AsyncImage(model = items[pos].picUrl, contentDescription =items[pos].title,
             modifier = Modifier
                 .width(175.dp)
                 .background(Color.LightGray, shape = RoundedCornerShape(10.dp))

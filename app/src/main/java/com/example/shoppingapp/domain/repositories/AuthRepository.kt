@@ -9,7 +9,6 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): Result<String>
     suspend fun sendPasswordResetEmail(email: String):Boolean
     suspend fun getUserName(userId: String) : String?
-  //  suspend fun getUserRole(userId:String):String?
     suspend fun getUserData(userId: String): Result<User>
     fun getCurrentUserId(): String?
     fun isUserLoggedIn(): Boolean
