@@ -1,6 +1,7 @@
 package com.example.shoppingapp.presentation.admin
 
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -48,12 +49,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.shoppingapp.R
 import com.example.shoppingapp.data.ui.BottomMenuContent
 import com.example.shoppingapp.data.ui.Feature
 import com.example.shoppingapp.presentation.auth.LoginViewModel
@@ -76,55 +79,33 @@ import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
 fun AdminDashboardScreen(navHostController: NavHostController = rememberNavController()) {
-
-
-    /*Text(text = "Welcome to the Admin Dashboard!")
-
-    Button(onClick = {
-        // Log out the user
-        viewModel.logoutUser()
-
-        // Navigate back to the login screen
-        navHostController.navigate("login")
-    }) {
-        Text(text = "Logout")
-    }
-
-    val userName by viewModel.userName.observeAsState("")
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Welcome, $userName!") // Display the user's name
-    }*/
-    
+    val context: Context = LocalContext.current
     Box(modifier = Modifier
         .fillMaxSize()){
         Column {
-            GreetingSection()
+            GreetingSection(navHostController)
             ChipSection(chips = listOf("Total Order","New Orders","Pending Orders"))
             FeaturesSection(features = listOf(
                 Feature(
-                    title = "Customer Management",
+                    title = context.getString(R.string.cust_txt),
                     icon = Icons.Filled.AccountCircle,
                     MaterialTheme.colorScheme.BlueViolet1,
                     MaterialTheme.colorScheme.BlueViolet2,
                     MaterialTheme.colorScheme.BlueViolet3
                 ),Feature(
-                    title = "Add Products",
+                    title = context.getString(R.string.product_add_txt),
                     icon = Icons.Filled.AddCircle,
                     MaterialTheme.colorScheme.LightGreen1,
                     MaterialTheme.colorScheme.LightGreen2,
                     MaterialTheme.colorScheme.LightGreen3
                 ),Feature(
-                    title = "Order Management",
+                    title = context.getString(R.string.order_mgmt_txt),
                     icon = Icons.Filled.ShoppingCart,
                     MaterialTheme.colorScheme.OrangeYellow1,
                     MaterialTheme.colorScheme.OrangeYellow2,
                     MaterialTheme.colorScheme.OrangeYellow3
                 ),Feature(
-                    title = "Product Management",
+                    title = context.getString(R.string.product_mgmt_txt),
                     icon = Icons.Filled.Home,
                     MaterialTheme.colorScheme.Beige1,
                     MaterialTheme.colorScheme.Beige2,
@@ -134,14 +115,13 @@ fun AdminDashboardScreen(navHostController: NavHostController = rememberNavContr
                 navHostController = navHostController
                 )
         }
-            BottomMenu(items = listOf(
+            /*BottomMenu(items = listOf(
                 BottomMenuContent("Home",Icons.Default.Home),
                 BottomMenuContent("settings",Icons.Default.Settings),
                 BottomMenuContent("Profile",Icons.Default.AccountCircle),
                 BottomMenuContent("Help",Icons.Default.Info),
-             //   BottomMenuContent("Chat",R.drawable.ic_launcher_foreground),
 
-            ), modifier = Modifier.align(Alignment.BottomCenter))
+            ), modifier = Modifier.align(Alignment.BottomCenter))*/
     }
  }
 
@@ -214,16 +194,19 @@ fun BottomMenuItem(
 
 @Composable
 fun GreetingSection(
+    navHostController: NavHostController,
     viewModel: LoginViewModel = koinViewModel(),
-    navHostController: NavHostController = rememberNavController(),
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed)
 ){
+    val context: Context = LocalContext.current
     val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     val userName = sharedPreferencesManager.getUserData().userName
     val logoutStatus = viewModel.logoutStatus.observeAsState().value
+
     LaunchedEffect(logoutStatus) {
-        if (logoutStatus == "Logged out") {
-            Toast.makeText(navHostController.context, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        if (logoutStatus == context.getString(R.string.Logged_out_txt)) {
+            Toast.makeText(navHostController.context, context.getString(R.string.Log_out_msg_txt),
+                Toast.LENGTH_SHORT).show()
             navHostController.navigate("login") {
                 popUpTo("admin_dashboard") { inclusive = true }
             }
@@ -239,12 +222,16 @@ fun GreetingSection(
             .padding(15.dp)
     ){
         Column(verticalArrangement = Arrangement.Center) {
-            Text(text = "Welcome Back, $userName",
-                style = MaterialTheme.typography.headlineMedium)
-            Text(text = "We wish you have a good day!",
+            Text(text = context.getString(R.string.Welcome_txt), color = Color.Black)
+
+            Text(
+                text = "$userName!", color = Color.Black,
+                fontSize = 18.sp, fontWeight = FontWeight.Bold
+            )
+            Text(text = context.getString(R.string.wish_txt),
                 style = MaterialTheme.typography.bodyLarge)
         }
-        Icon(imageVector = Icons.Sharp.ExitToApp, contentDescription = "Profile",
+        Icon(imageVector = Icons.Sharp.ExitToApp, contentDescription = context.getString(R.string.Profile_txt),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .size(24.dp)

@@ -114,7 +114,7 @@ fun ProductDetailsScreen(
                 ) {
                     // Product Image
                     AsyncImage(
-                        model = productDetails!!.picUrl.firstOrNull(),
+                        model = productDetails!!.picUrl,
                         contentDescription = productDetails!!.title,
                         modifier = Modifier
                             .fillMaxWidth()

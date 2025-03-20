@@ -68,7 +68,8 @@ dependencies {
 
     // Coil
     implementation ("io.coil-kt:coil-compose:2.0.0")
-   // implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.storage)
+    // implementation(libs.androidx.constraintlayout)
 
 
     testImplementation(libs.junit)
@@ -83,6 +84,10 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore.ktx)
+    // Firebase App Check for Realtime Database
+   // implementation ("com.google.firebase:firebase-appcheck-playintegrity:17.0.0")
+    // Firebase App Check for Firebase Storage (if you're using Firebase Storage)
+  //  implementation ("com.google.firebase:firebase-appcheck-safetynet:17.0.0")
 
     // Room Database
     implementation ("androidx.room:room-runtime:2.5.0")
