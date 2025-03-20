@@ -65,5 +65,8 @@
     <string name="product_add_txt">Add Products</string>
     <string name="product_category_txt">Product Category</string>
     <string name="select_category_txt">Select a Category</string>
+    <string name="Show_invoice_btn">Show Invoice</string>
+    <string name="no_orders_found">No order found</string>
+    <string name="shop_more_btn">Continue Shopping</string>
 
 </resources>

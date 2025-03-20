@@ -26,6 +26,8 @@ import com.example.shoppingapp.presentation.splash.SplashScreen
 import com.example.shoppingapp.presentation.user.CartScreen
 import com.example.shoppingapp.presentation.user.CategoryItemsScreen
 import com.example.shoppingapp.presentation.user.CustomerDashboardScreen
+import com.example.shoppingapp.presentation.user.OrderDetailScreen
+import com.example.shoppingapp.presentation.user.OrderHistoryScreen
 import com.example.shoppingapp.presentation.user.ProductDetailsScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -90,10 +92,14 @@ class MainActivity : ComponentActivity() {
             composable("cart") {
                 CartScreen(navController)
             }
-           /* composable("order_summary") {
-                OrderSummaryScreen("Order successfully placed!")
+            composable("order_history") {
+                OrderHistoryScreen(navController)
             }
-*/
+            composable("orderDetail/{orderId}") { backStackEntry ->
+                val orderId = backStackEntry.arguments?.getString("orderId")
+                OrderDetailScreen(navController = navController, orderId = orderId)
+            }
+
             composable("admin_dashboard") {
                 AdminDashboardScreen(navController)
             }
