@@ -426,7 +426,7 @@ fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
             text = context.getString(R.string.Cart_txt), onItemClick = { onItemClick("cart") })
         /*BottomMenuItem(icon = Icons.Default.Favorite, text = "Favorite", onItemClick = { onItemClick(" ") })*/
         BottomMenuItem(icon = Icons.Default.List,
-            text = context.getString(R.string.Orders_txt), onItemClick = { onItemClick(" ") })
+            text = context.getString(R.string.Orders_txt), onItemClick = { onItemClick("order_history") })
         BottomMenuItem(icon = Icons.Default.Person,
             text = context.getString(R.string.Profile_txt), onItemClick = { onItemClick("cart") })
     }

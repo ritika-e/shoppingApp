@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -67,6 +68,8 @@ fun CartScreen(
         Log.e("Order", "Cart is empty")
     }
 
+    var showInvoice by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -94,6 +97,22 @@ fun CartScreen(
                             CartItemView(cartItem, cartViewModel)
                         }
                     }
+                    // Show invoice button
+                    Button(
+                        onClick = {
+                            showInvoice = !showInvoice // Toggle invoice visibility
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(context.getString(R.string.Show_invoice_btn))
+                    }
+
+                    // If invoice is visible, show invoice details
+                    if (showInvoice) {
+                        InvoiceView(cartItems = cartItems!!)
+                    }
 
                     // Place order button
                     Button(
@@ -115,6 +134,20 @@ fun CartScreen(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
+
+                    Button(
+                        onClick = {
+                            navController.navigate("customer_dashboard"){
+                                popUpTo("cart") { inclusive = true }
+                                launchSingleTop = true}
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(context.getString(R.string.shop_more_btn))
+                    }
+
                 }
             }
         }
@@ -130,7 +163,7 @@ fun CartItemView(
     var quantity by remember { mutableStateOf(cartItem.quantity) }
 
     // Handle the image loading
-    val imageUrl = cartItem.product.picUrl ?: "default_image_url"
+    val imageUrl = cartItem.product.picUrl ?: R.drawable.default_image
     val context:Context = LocalContext.current
 
     // Cart item view layout
@@ -201,6 +234,77 @@ fun CartItemView(
         }) {
             Icon(imageVector = Icons.Filled.Delete, contentDescription =
             context.getString(R.string.Remove_btn))
+        }
+    }
+}
+@Composable
+fun InvoiceView(cartItems: List<CartItem>) {
+    var context:Context = LocalContext.current
+    // Calculate total amount and product totals
+    val totalAmount = cartItems.sumOf { it.productTotal }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = context.getString(R.string.invoice),
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        LazyColumn {
+            items(cartItems) { cartItem ->
+                InvoiceItemView(cartItem)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Total Amount
+        Text(
+            text = "Total Amount: $$totalAmount",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+fun InvoiceItemView(cartItem: CartItem) {
+    val itemTotal = cartItem.product.price * cartItem.quantity
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Product Name and Quantity
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = cartItem.product.title,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1
+            )
+            Text(
+                text = "Quantity: ${cartItem.quantity}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        // Price per unit and Total price (price * quantity)
+        Column(
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = "$${cartItem.product.price}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "$${itemTotal} ",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

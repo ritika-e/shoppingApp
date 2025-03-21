@@ -13,9 +13,15 @@ class PlaceOrderUseCase(private val orderRepositoryImpl: OrderRepositoryImpl) {
         Log.d("PlaceOrderUseCase", "Cart Items: $cartItems")
         Log.d("PlaceOrderUseCase", "Total Amount: $totalAmount")
         Log.d("PlaceOrderUseCase", "User ID: $userId")
+
+        val totalAmountCalculated  = cartItems.sumOf { it.product.price * it.quantity }
+        Log.d("PlaceOrderUseCase", "Product Total: $totalAmountCalculated ")
+
         val order = Order(
+           // orderId = (0..Int.MAX_VALUE).random().toString(),
             cartItems = cartItems,
-            totalAmount = totalAmount,
+            totalAmount = totalAmountCalculated,
+            productTotal = totalAmountCalculated ,
             orderDate = System.currentTimeMillis().toString(),
             userId = userId
         )

@@ -6,6 +6,7 @@ import com.example.shoppingapp.data.auth.AuthRepositoryImpl
 import com.example.shoppingapp.data.product.CartRepositoryImpl
 import com.example.shoppingapp.data.product.FirebaseProductRepositoryImpl
 import com.example.shoppingapp.data.product.InMemoryCartDataSourceRepository
+import com.example.shoppingapp.data.product.OrderHistoryImpl
 import com.example.shoppingapp.domain.repositories.ProductRepository
 import com.example.shoppingapp.data.product.ProductRepositoryImpl
 import com.example.shoppingapp.data.user.UserRepository
@@ -14,6 +15,7 @@ import com.example.shoppingapp.domain.repositories.CartDataSourceRepository
 import com.example.shoppingapp.domain.repositories.CartRepository
 import com.example.shoppingapp.data.product.OrderRepositoryImpl
 import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
+import com.example.shoppingapp.domain.repositories.OrderHistoryRepository
 import com.example.shoppingapp.domain.usecase.GetCurrentUserIdUseCase
 import com.example.shoppingapp.domain.usecase.LoginUseCase
 import com.example.shoppingapp.domain.usecase.ResetPasswordUseCase
@@ -29,6 +31,8 @@ import com.example.shoppingapp.domain.usecase.productUseCases.GetBannersUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCartItemsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoriesUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoryItemUseCase
+import com.example.shoppingapp.domain.usecase.productUseCases.GetOrderByIdUseCase
+import com.example.shoppingapp.domain.usecase.productUseCases.GetOrderHistoryUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetProductDetailsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetRecommendedProductsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.PlaceOrderUseCase
@@ -40,6 +44,7 @@ import com.example.shoppingapp.presentation.auth.ForgetPasswordViewModel
 import com.example.shoppingapp.presentation.auth.SignupViewModel
 import com.example.shoppingapp.presentation.splash.SplashViewModel
 import com.example.shoppingapp.presentation.user.CartViewModel
+import com.example.shoppingapp.presentation.user.OrderHistoryViewModel
 import com.example.shoppingapp.presentation.user.ProductDetailsViewModel
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import com.google.firebase.auth.FirebaseAuth
@@ -76,6 +81,7 @@ val appModule = module{
     single { OrderRepositoryImpl(get()) }
    // single { FirebaseProductRepositoryImpl() }
     single <FirebaseProductRepository>{ FirebaseProductRepositoryImpl()  }
+    single <OrderHistoryRepository>{ OrderHistoryImpl(get()) }
 
 
 
@@ -104,6 +110,8 @@ val appModule = module{
     single { UpdateProductUseCase(get()) }
     single { DeleteProductUseCase(get()) }
     single { GetAllProductsUseCase(get()) }
+    single { GetOrderHistoryUseCase(get()) }
+    single { GetOrderByIdUseCase(get()) }
 
     // viewModel
     viewModel { SplashViewModel() }
@@ -113,4 +121,5 @@ val appModule = module{
     viewModel { ProductViewModel(get(),get(),get(),get(),get()) }
     viewModel { ProductDetailsViewModel(get(), get(), get(),get() ,get()) }
     viewModel { CartViewModel(get(),get()) }
+    viewModel { OrderHistoryViewModel(get(),get()) }
 }

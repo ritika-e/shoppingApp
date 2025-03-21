@@ -26,6 +26,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
     init {
          loadCartItems()
     }
+
     private fun loadCartItems() {
         _cartItems.value = cartUseCases.getCartItemsUseCase.execute() ?: emptyList()
     }
@@ -77,6 +78,10 @@ class CartViewModel(private val cartUseCases: CartUseCases,
         val totalAmount = cartItemsList.sumOf { it.product.price * it.quantity }
         Log.d("CartViewModel", "Total Amount: $totalAmount")
 
+        val updatedCartItems = cartItemsList.map {
+            it.copy(productTotal = it.product.price * it.quantity) // Update each CartItem with its productTotal
+        }
+
         val userId = sharedPreferencesManager.getUserData().userId
 
        // val userId = "15oVh6zbJBadejyGrM0eT3EwWKx2"
@@ -90,7 +95,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
 
         // Call the use case to place the order
         viewModelScope.launch {
-            val result = placeOrderUseCase.execute(cartItemsList, totalAmount, userId!!)
+            val result = placeOrderUseCase.execute(updatedCartItems, totalAmount, userId!!)
             if (result.isSuccess) {
                 _orderStatus.value = "Order placed successfully! Order ID: ${result.getOrNull()}"
             } else {
