@@ -68,5 +68,15 @@
     <string name="Show_invoice_btn">Show Invoice</string>
     <string name="no_orders_found">No order found</string>
     <string name="shop_more_btn">Continue Shopping</string>
+    <string name="order_details">Order Details</string>
+    <string name="no_order">No order found.</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="order_id">Order ID: %1$s</string>
+    <string name="status">Status: %1$s</string>
+    <string name="total_amt">Total Amount: $%1$.2f</string>
+    <string name="total">Total: $%1$.2f</string>
+    <string name="order_date">Order Date: $%1$</string>
+    <string name="items">Items:</string>
+    <string name="invoice">Invoice</string>
 
 </resources>

@@ -117,7 +117,7 @@ fun OrderItemView(navHostController: NavHostController,
 
     // Highlight order status (Pending, Completed, etc.)
     val statusColor = when (order.status.lowercase()) {
-        "pending" -> Color.Yellow
+        "pending" -> Color.Blue
         "completed" -> Color.Green
         "cancelled" -> Color.Red
         else -> Color.Gray

@@ -163,7 +163,7 @@ fun CartItemView(
     var quantity by remember { mutableStateOf(cartItem.quantity) }
 
     // Handle the image loading
-    val imageUrl = cartItem.product.picUrl ?: "default_image_url"
+    val imageUrl = cartItem.product.picUrl ?: R.drawable.default_image
     val context:Context = LocalContext.current
 
     // Cart item view layout
@@ -239,12 +239,13 @@ fun CartItemView(
 }
 @Composable
 fun InvoiceView(cartItems: List<CartItem>) {
+    var context:Context = LocalContext.current
     // Calculate total amount and product totals
     val totalAmount = cartItems.sumOf { it.productTotal }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
-            text = "Invoice",
+            text = context.getString(R.string.invoice),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(bottom = 8.dp)
         )
