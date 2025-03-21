@@ -16,6 +16,7 @@ import com.example.shoppingapp.domain.repositories.CartRepository
 import com.example.shoppingapp.data.product.OrderRepositoryImpl
 import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
 import com.example.shoppingapp.domain.repositories.OrderHistoryRepository
+import com.example.shoppingapp.domain.repositories.OrderRepository
 import com.example.shoppingapp.domain.usecase.GetCurrentUserIdUseCase
 import com.example.shoppingapp.domain.usecase.LoginUseCase
 import com.example.shoppingapp.domain.usecase.ResetPasswordUseCase
@@ -23,7 +24,9 @@ import com.example.shoppingapp.domain.usecase.SignUpUseCase
 import com.example.shoppingapp.domain.usecase.UserUseCase
 import com.example.shoppingapp.domain.usecase.admin.AddProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.DeleteProductUseCase
+import com.example.shoppingapp.domain.usecase.admin.FetchOrdersUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetAllProductsUseCase
+import com.example.shoppingapp.domain.usecase.admin.UpdateOrderStatusUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.AddProductToCartUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.CartUseCases
@@ -38,6 +41,7 @@ import com.example.shoppingapp.domain.usecase.productUseCases.GetRecommendedProd
 import com.example.shoppingapp.domain.usecase.productUseCases.PlaceOrderUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.RemoveProductFromCartUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.UpdateProductQuantityUseCase
+import com.example.shoppingapp.presentation.admin.AdminOrderViewModel
 import com.example.shoppingapp.presentation.admin.ProductViewModel
 import com.example.shoppingapp.presentation.auth.LoginViewModel
 import com.example.shoppingapp.presentation.auth.ForgetPasswordViewModel
@@ -82,6 +86,7 @@ val appModule = module{
    // single { FirebaseProductRepositoryImpl() }
     single <FirebaseProductRepository>{ FirebaseProductRepositoryImpl()  }
     single <OrderHistoryRepository>{ OrderHistoryImpl(get()) }
+    single <OrderRepository>{ com.example.shoppingapp.data.admin.OrderRepositoryImpl(get()) }
 
 
 
@@ -112,6 +117,8 @@ val appModule = module{
     single { GetAllProductsUseCase(get()) }
     single { GetOrderHistoryUseCase(get()) }
     single { GetOrderByIdUseCase(get()) }
+    single { FetchOrdersUseCase(get()) }
+    single { UpdateOrderStatusUseCase(get()) }
 
     // viewModel
     viewModel { SplashViewModel() }
@@ -122,4 +129,5 @@ val appModule = module{
     viewModel { ProductDetailsViewModel(get(), get(), get(),get() ,get()) }
     viewModel { CartViewModel(get(),get()) }
     viewModel { OrderHistoryViewModel(get(),get()) }
+    viewModel { AdminOrderViewModel(get(),get()) }
 }

@@ -78,5 +78,9 @@
     <string name="order_date">Order Date: $%1$</string>
     <string name="items">Items:</string>
     <string name="invoice">Invoice</string>
+    <string name="order_list">Admin Order List</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="completed_btn">Complete</string>
 
 </resources>
