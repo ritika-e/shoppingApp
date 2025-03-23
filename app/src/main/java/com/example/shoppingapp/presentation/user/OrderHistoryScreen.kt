@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.shoppingapp.R
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import org.koin.androidx.compose.koinViewModel
@@ -88,7 +89,7 @@ fun OrderHistoryScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 } else if (orderHistory.isEmpty()) {
                     Text(
-                        "No orders found.",
+                        context.getString(R.string.no_orders_found),
                         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)
                     )
                 } else {

@@ -388,7 +388,7 @@ fun FeatureItem(
             modifier = Modifier
                 .clickable {
                     when (feature.title) {
-                        "Customer Management" -> navHostController.navigate("customerManagement")
+                        "Customer Management" -> navHostController.navigate("customer_list")
                         "Add Products" -> navHostController.navigate("addProducts")
                         "Order Management" -> navHostController.navigate("orderManagement")
                         "Product Management" -> navHostController.navigate("productManagement")
