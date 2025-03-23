@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.example.shoppingapp.domain.model.ProductList
 import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
+import com.example.shoppingapp.domain.repositories.ProductManagementRespository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -60,20 +61,27 @@ class AddProductUseCase(private val productRepository: FirebaseProductRepository
     }
 }
 
-    class UpdateProductUseCase(private val productRepository: FirebaseProductRepository) {
-        suspend fun execute(product: ProductList) {
-            productRepository.updateProduct(product)
+    class UpdateProductUseCase(private val productRepository: ProductManagementRespository) {
+        suspend fun execute(productId: Int, product: ProductList) {
+            productRepository.updateProduct(productId, product)
         }
     }
 
-    class DeleteProductUseCase(private val productRepository: FirebaseProductRepository) {
+    class DeleteProductUseCase(private val productRepository: ProductManagementRespository) {
         suspend fun execute(productId: Int) {
             productRepository.deleteProduct(productId)
         }
     }
 
-    class GetAllProductsUseCase(private val productRepository: FirebaseProductRepository) {
+    class GetAllProductsUseCase(private val productRepository: ProductManagementRespository) {
         suspend fun execute(): List<ProductList> {
-            return productRepository.getAllProducts()
+            return productRepository.getProducts()
         }
     }
+
+class GetProductByIdUseCase(private val productRepository: ProductManagementRespository) {
+    suspend fun execute(productId: Int): ProductList? {
+        Log.e("Use case","GetProductByIdUseCase productId $productId")
+        return productRepository.getProductById(productId)
+    }
+}

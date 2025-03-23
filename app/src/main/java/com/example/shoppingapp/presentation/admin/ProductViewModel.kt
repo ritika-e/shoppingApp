@@ -15,6 +15,7 @@ import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
 import com.example.shoppingapp.domain.usecase.admin.AddProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.DeleteProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetAllProductsUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetProductByIdUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,7 @@ class ProductViewModel(
     private val updateProductUseCase: UpdateProductUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
     private val getAllProductsUseCase: GetAllProductsUseCase,
+    private val getProductByIdUseCase: GetProductByIdUseCase,
     private val fbProductRepository: FirebaseProductRepository,
 ) : ViewModel() {
 
@@ -32,8 +34,14 @@ class ProductViewModel(
     private val _productUploadStatus = MutableLiveData<Boolean>()
     val productUploadStatus: LiveData<Boolean> get() = _productUploadStatus
 
-    private val _products = MutableLiveData<List<ProductList>>()
-    val products: LiveData<List<ProductList>> get() = _products
+    private val _productsList = MutableLiveData<List<ProductList>>()
+    val productsList: LiveData<List<ProductList>> get() = _productsList
+
+    private val _product = MutableLiveData<ProductList?>()  // Updated to hold a single product
+    val product: LiveData<ProductList?> get() = _product
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     var selectedImageUri: Uri? by mutableStateOf(null)
 
@@ -49,6 +57,40 @@ class ProductViewModel(
                 onProgress = onProgress,
                 onComplete = onComplete
             )
+        }
+    }
+
+    fun getProductById(productId: Int) {
+        Log.e("ViewModel getProductById","getProductById productId $productId")
+        viewModelScope.launch {
+            _isLoading.value = true
+            val result = getProductByIdUseCase.execute(productId)
+            _isLoading.value = false
+            _product.value = result
+        }
+    }
+
+   fun getProducts() {
+       viewModelScope.launch {
+           _isLoading.value = true
+           val result = getAllProductsUseCase.execute()
+           _isLoading.value = false
+           _productsList.value = result
+       }
+   }
+
+    fun updateProduct(productId: Int, product: ProductList) {
+        Log.d("ProductViewModel", "Updating product with id: $productId")
+        viewModelScope.launch {
+            _isLoading.value = true
+            updateProductUseCase.execute(productId, product)
+            _isLoading.value = false
+        }
+    }
+
+    fun deleteProduct(productId: Int) {
+        viewModelScope.launch {
+            deleteProductUseCase.execute(productId)
         }
     }
 }

@@ -120,7 +120,7 @@ class FirebaseProductRepositoryImpl : FirebaseProductRepository {
           }
       }*/
 
-    override suspend fun updateProduct(product: ProductList) {
+   /* override suspend fun updateProduct(product: ProductList) {
         TODO("Not yet implemented")
     }
 
@@ -130,5 +130,5 @@ class FirebaseProductRepositoryImpl : FirebaseProductRepository {
 
     override suspend fun getAllProducts(): List<ProductList> {
         TODO("Not yet implemented")
-    }
+    }*/
 }
