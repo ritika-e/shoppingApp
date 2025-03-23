@@ -43,7 +43,7 @@ import java.util.UUID
 
 @Composable
 fun ProductListScreen(viewModel: ProductViewModel = koinViewModel()) {
-    val products by viewModel.products.observeAsState(emptyList())
+   // val products by viewModel.products.observeAsState(emptyList())
 
 }
 

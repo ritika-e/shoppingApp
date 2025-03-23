@@ -82,5 +82,10 @@
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
     <string name="completed_btn">Complete</string>
+    <string name="product_list">Product List</string>
+    <string name="view_details">View Details</string>
+    <string name="delete_btn">Delete</string>
+    <string name="product_not_found">Product not found</string>
+    <string name="update_product_btn">Update Product</string>
 
 </resources>

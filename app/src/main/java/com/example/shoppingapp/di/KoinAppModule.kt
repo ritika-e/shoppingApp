@@ -1,6 +1,7 @@
 package com.example.shoppingapp.di
 
 
+import com.example.shoppingapp.data.admin.ProductManagementRepositoryImpl
 import com.example.shoppingapp.data.auth.AuthService
 import com.example.shoppingapp.data.auth.AuthRepositoryImpl
 import com.example.shoppingapp.data.product.CartRepositoryImpl
@@ -9,7 +10,6 @@ import com.example.shoppingapp.data.product.InMemoryCartDataSourceRepository
 import com.example.shoppingapp.data.product.OrderHistoryImpl
 import com.example.shoppingapp.domain.repositories.ProductRepository
 import com.example.shoppingapp.data.product.ProductRepositoryImpl
-import com.example.shoppingapp.data.user.UserRepository
 import com.example.shoppingapp.domain.repositories.AuthRepository
 import com.example.shoppingapp.domain.repositories.CartDataSourceRepository
 import com.example.shoppingapp.domain.repositories.CartRepository
@@ -17,6 +17,7 @@ import com.example.shoppingapp.data.product.OrderRepositoryImpl
 import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
 import com.example.shoppingapp.domain.repositories.OrderHistoryRepository
 import com.example.shoppingapp.domain.repositories.OrderRepository
+import com.example.shoppingapp.domain.repositories.ProductManagementRespository
 import com.example.shoppingapp.domain.usecase.GetCurrentUserIdUseCase
 import com.example.shoppingapp.domain.usecase.LoginUseCase
 import com.example.shoppingapp.domain.usecase.ResetPasswordUseCase
@@ -26,6 +27,7 @@ import com.example.shoppingapp.domain.usecase.admin.AddProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.DeleteProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.FetchOrdersUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetAllProductsUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetProductByIdUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateOrderStatusUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.AddProductToCartUseCase
@@ -87,6 +89,7 @@ val appModule = module{
     single <FirebaseProductRepository>{ FirebaseProductRepositoryImpl()  }
     single <OrderHistoryRepository>{ OrderHistoryImpl(get()) }
     single <OrderRepository>{ com.example.shoppingapp.data.admin.OrderRepositoryImpl(get()) }
+    single <ProductManagementRespository>{ ProductManagementRepositoryImpl(get(),get()) }
 
 
 
@@ -119,13 +122,14 @@ val appModule = module{
     single { GetOrderByIdUseCase(get()) }
     single { FetchOrdersUseCase(get()) }
     single { UpdateOrderStatusUseCase(get()) }
+    single { GetProductByIdUseCase(get()) }
 
     // viewModel
     viewModel { SplashViewModel() }
     viewModel { LoginViewModel(get(),get()) }
     viewModel { SignupViewModel(get()) }
     viewModel { ForgetPasswordViewModel(get()) }
-    viewModel { ProductViewModel(get(),get(),get(),get(),get()) }
+    viewModel { ProductViewModel(get(),get(),get(),get(),get(),get()) }
     viewModel { ProductDetailsViewModel(get(), get(), get(),get() ,get()) }
     viewModel { CartViewModel(get(),get()) }
     viewModel { OrderHistoryViewModel(get(),get()) }
