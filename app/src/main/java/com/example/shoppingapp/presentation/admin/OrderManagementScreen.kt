@@ -3,8 +3,10 @@ package com.example.shoppingapp.presentation.admin
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,7 +54,8 @@ fun OrderManagementScreen(
                 title = { Text(context.getString(R.string.order_list)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
                     }
                 }
             )
@@ -60,7 +63,9 @@ fun OrderManagementScreen(
         content = { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (loading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 } else if (orderHistory.isEmpty()) {
                     Text(context.getString(R.string.no_order))
                 } else {

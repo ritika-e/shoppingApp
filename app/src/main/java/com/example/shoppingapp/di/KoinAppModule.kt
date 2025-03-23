@@ -146,4 +146,5 @@ val appModule = module{
     viewModel { CartViewModel(get(),get()) }
     viewModel { OrderHistoryViewModel(get(),get()) }
     viewModel { AdminOrderViewModel(get(),get()) }
+    viewModel { CustomerViewModel(get(),get(),get(),get()) }
 }
