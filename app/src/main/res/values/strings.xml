@@ -82,5 +82,9 @@
     <string name="customer_details">Customer Details</string>
     <string name="customer_no_order">No orders found for this customer.</string>
     <string name="show_details">Show Details</string>
+    <string name="order_list">Admin Order List</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="completed_btn">Complete</string>
 
 </resources>
