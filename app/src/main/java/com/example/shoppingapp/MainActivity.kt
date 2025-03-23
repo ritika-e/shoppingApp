@@ -16,7 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.shoppingapp.presentation.admin.AdminDashboardScreen
-import com.example.shoppingapp.presentation.admin.CustomerManagementScreen
+import com.example.shoppingapp.presentation.admin.CustomerDetailsScreen
+import com.example.shoppingapp.presentation.admin.CustomerListScreen
 import com.example.shoppingapp.presentation.admin.GreetingSection
 import com.example.shoppingapp.presentation.admin.OrderManagementScreen
 import com.example.shoppingapp.presentation.admin.ProductListScreen
@@ -76,10 +77,6 @@ class MainActivity : ComponentActivity() {
                     //onBackClick = { navController.navigateUp() },
                     )
             }
-         /*   composable("product_details/{productId}") { backStackEntry ->
-                val productId = backStackEntry.arguments?.getString("productId")?.toInt() ?: 0
-                ProductDetailsScreen(navController, productId)
-            }*/
             composable(
                 "category_items/{categoryID}/{title}",
                 arguments = listOf(navArgument("categoryID") { type = NavType.StringType },
@@ -139,10 +136,15 @@ class MainActivity : ComponentActivity() {
                     UpdateProductScreen(navController = navController, productId = productId)
                 }
             }
-            composable("customerManagement"){
-                CustomerManagementScreen(navController)
+            composable("customer_list"){
+                CustomerListScreen(navController)
             }
-
+            composable("customerDetails/{customerId}"){ backStackEntry ->
+                val customerId = backStackEntry.arguments?.getString("customerId")
+                if (customerId != null) {
+                    CustomerDetailsScreen(navController,customerId = customerId)
+                }
+            }
         }
     }
     @Deprecated("This method has been deprecated in favor of using the Activity Result API\n which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
