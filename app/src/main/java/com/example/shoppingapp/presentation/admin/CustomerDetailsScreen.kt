@@ -3,6 +3,7 @@ package com.example.shoppingapp.presentation.admin
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,7 +65,8 @@ fun CustomerDetailsScreen(
                 title = { Text(context.getString(R.string.customer_details)) },
                 navigationIcon = {
                     IconButton(onClick = { navHostController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
                     }
                 }
             )
@@ -78,11 +80,9 @@ fun CustomerDetailsScreen(
                 // Show loading indicator while customer details are being fetched
                 if (customer == null) {
                     // Show circular progress indicator while fetching
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
-                    )
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 } else {
                     // Customer info section
                     Card(

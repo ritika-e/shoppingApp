@@ -1,67 +1,42 @@
 package com.example.shoppingapp.ui.screen
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.shoppingapp.R
-import com.example.shoppingapp.domain.model.ItemsModel
 import com.example.shoppingapp.domain.model.ProductList
 import com.example.shoppingapp.domain.model.categories
 import org.koin.androidx.compose.koinViewModel
  import com.example.shoppingapp.presentation.admin.ProductViewModel
-import java.util.UUID
-
-@Composable
-fun ProductListScreen(viewModel: ProductViewModel = koinViewModel()) {
-   // val products by viewModel.products.observeAsState(emptyList())
-
-}
-
-@Composable
-fun ProductItem(product: ItemsModel, onDelete: (String) -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = product.title, style = MaterialTheme.typography.headlineSmall)
-        Text(text = "Description: ${product.description}")
-        Text(text = "Price: \$${product.price}")
-        /* Button(onClick = { onDelete(product.id) }) {
-             Text("Delete Product")
-         }*/
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(viewModel: ProductViewModel = koinViewModel()) {
+fun AddProductScreen( navController: NavHostController,
+    viewModel: ProductViewModel = koinViewModel()) {
     var productName by remember { mutableStateOf("") }
     var productDescription by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
@@ -81,16 +56,27 @@ fun AddProductScreen(viewModel: ProductViewModel = koinViewModel()) {
     }
 
     // Handling when the user selects an image
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = context.getString(R.string.add_product_txt)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(paddingValues)
             .fillMaxSize()
     ) {
-        Text(context.getString(R.string.add_product_txt), style = MaterialTheme.typography.headlineSmall)
 
         Spacer(modifier = Modifier.height(16.dp))
         // Product Category Dropdown
-        Text(text = context.getString(R.string.product_category_txt))
 
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -219,3 +205,4 @@ fun AddProductScreen(viewModel: ProductViewModel = koinViewModel()) {
         }
     }
 }
+    }

@@ -84,7 +84,6 @@ class CartViewModel(private val cartUseCases: CartUseCases,
 
         val userId = sharedPreferencesManager.getUserData().userId
 
-       // val userId = "15oVh6zbJBadejyGrM0eT3EwWKx2"
         Log.d("CartViewModel", "User ID: $userId")
 
         if (cartItemsList.isEmpty()) {
@@ -103,5 +102,9 @@ class CartViewModel(private val cartUseCases: CartUseCases,
                 Log.e("CartViewModel", "Failed to place order: ${result.exceptionOrNull()?.message}")
             }
         }
+    }
+
+    fun clearCart() {
+        cartUseCases.clearCartUseCase.execute() // Calls the repository to clear the cart
     }
 }
