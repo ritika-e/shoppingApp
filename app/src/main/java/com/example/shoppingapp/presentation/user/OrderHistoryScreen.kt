@@ -1,6 +1,8 @@
 package com.example.shoppingapp.presentation.user
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -75,10 +77,11 @@ fun OrderHistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Order History") },
+                title = { Text(context.getString(R.string.order_history)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
                     }
                 }
             )
@@ -86,7 +89,9 @@ fun OrderHistoryScreen(
         content = { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 if (loading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 } else if (orderHistory.isEmpty()) {
                     Text(
                         context.getString(R.string.no_orders_found),
@@ -107,20 +112,21 @@ fun OrderHistoryScreen(
 @Composable
 fun OrderItemView(navHostController: NavHostController,
     order: Order) {
+    val context:Context = LocalContext.current
     // Convert timestamp to a human-readable date
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
     val formattedDate = try {
         val timestamp = order.orderDate.toLongOrNull()
-        timestamp?.let { dateFormat.format(Date(it)) } ?: "Unknown Date"
+        timestamp?.let { dateFormat.format(Date(it)) } ?: context.getString(R.string.unknown_dates)
     } catch (e: Exception) {
-        "Invalid Date"
+        context.getString(R.string.invalid_dates)
     }
 
-    // Highlight order status (Pending, Completed, etc.)
+    // Highlight order status (Accept, Delivered, Reject.)
     val statusColor = when (order.status.lowercase()) {
-        "pending" -> Color.Blue
-        "completed" -> Color.Green
-        "cancelled" -> Color.Red
+        "Accept" -> Color.Blue
+        "Delivered" -> Color.Green
+        "Reject" -> Color.Red
         else -> Color.Gray
     }
 
@@ -155,7 +161,7 @@ fun OrderItemView(navHostController: NavHostController,
                 // Optional: Add a small icon indicating order status
                 Icon(
                     imageVector = Icons.Filled.Info,
-                    contentDescription = "Order Status",
+                    contentDescription = context.getString(R.string.order_status),
                     tint = statusColor,
                     modifier = Modifier.size(16.dp)
                 )
@@ -173,7 +179,7 @@ fun OrderItemView(navHostController: NavHostController,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
-                Text(text = "View Details", color = Color.White)
+                Text(text = context.getString(R.string.view_details) , color = Color.White)
             }
         }
     }

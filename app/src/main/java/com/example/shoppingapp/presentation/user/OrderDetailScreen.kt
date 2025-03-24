@@ -51,7 +51,8 @@ fun OrderDetailScreen(
                 title = { Text(context.getString(R.string.order_details)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
                     }
                 }
             )
@@ -59,7 +60,9 @@ fun OrderDetailScreen(
         content = { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
                 if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 } else if (error != null) {
                     Text(text = error ?: context.getString(R.string.unknown_error),
                         color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))

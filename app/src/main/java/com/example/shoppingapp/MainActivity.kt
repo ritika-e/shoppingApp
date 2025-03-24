@@ -36,6 +36,8 @@ import com.example.shoppingapp.presentation.user.CustomerDashboardScreen
 import com.example.shoppingapp.presentation.user.OrderDetailScreen
 import com.example.shoppingapp.presentation.user.OrderHistoryScreen
 import com.example.shoppingapp.presentation.user.ProductDetailsScreen
+import com.example.shoppingapp.presentation.user.ReturnPolicyScreen
+import com.example.shoppingapp.presentation.user.SupportScreen
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -119,7 +121,7 @@ class MainActivity : ComponentActivity() {
                 OrderManagementScreen(navController)
             }
             composable("addProducts"){
-                AddProductScreen()
+                AddProductScreen(navController)
             }
             composable("productManagement"){
                 ProductListScreen(navController)
@@ -138,6 +140,12 @@ class MainActivity : ComponentActivity() {
             }
             composable("customer_list"){
                 CustomerListScreen(navController)
+            }
+            composable("supportScreen"){
+                SupportScreen(navController)
+            }
+            composable("return_policy"){
+                ReturnPolicyScreen(navController)
             }
             composable("customerDetails/{customerId}"){ backStackEntry ->
                 val customerId = backStackEntry.arguments?.getString("customerId")

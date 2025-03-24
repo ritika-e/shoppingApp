@@ -25,4 +25,8 @@ class InMemoryCartDataSourceRepository: CartDataSourceRepository {
     override fun removeProduct(productId: Int) {
         cartItems.removeAll { it.product.productId == productId }
     }
+
+    override fun clearCart() {
+        cartItems.clear() // Clears all items in the cart
+    }
 }

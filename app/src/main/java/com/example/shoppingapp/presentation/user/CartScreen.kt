@@ -22,7 +22,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +51,11 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.shoppingapp.R
 import com.example.shoppingapp.domain.model.CartItem
+import com.example.shoppingapp.ui.theme.LightGreen1
+import com.example.shoppingapp.ui.theme.LightGreen2
+import com.example.shoppingapp.ui.theme.LightGreen3
+import com.example.shoppingapp.ui.theme.OrangeYellow2
+import com.example.shoppingapp.ui.theme.OrangeYellow3
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +68,7 @@ fun CartScreen(
     // Observe the cart items
     val cartItems by cartViewModel.cartItems.observeAsState(emptyList())
     val orderStatus by cartViewModel.orderStatus.observeAsState("")
+    var showOrderDialog by remember { mutableStateOf(false) }
     Log.e("CART ITEMS","--- $cartItems")
 
     if (cartItems != null && cartItems!!.isNotEmpty()) {
@@ -121,18 +130,22 @@ fun CartScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.LightGreen3 // Use any color you want
+                        )
                     ) {
                         Text(context.getString(R.string.Place_order_btn))
                     }
 
                     // Show order status (success or failure message)
                     if (orderStatus.isNotEmpty()) {
-                        Text(
+                        showOrderDialog = true
+                        /*Text(
                             text = orderStatus,
                             color = Color.Green,
                             modifier = Modifier.padding(16.dp)
-                        )
+                        )*/
                     }
 
                     Button(
@@ -143,7 +156,11 @@ fun CartScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.OrangeYellow2 // Use any color you want
+                        )
+
                     ) {
                         Text(context.getString(R.string.shop_more_btn))
                     }
@@ -152,6 +169,29 @@ fun CartScreen(
             }
         }
     )
+    // Order confirmation dialog
+    if (showOrderDialog) {
+        AlertDialog(
+            onDismissRequest = { /* Handle dismiss */ },
+            title = { Text(context.getString(R.string.order_status)) },
+            text = { Text(orderStatus) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showOrderDialog = false
+                        cartViewModel.clearCart()
+                        // Navigate to the dashboard screen after confirmation
+                        navController.navigate("customer_dashboard") {
+                            popUpTo("cart") { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                ) {
+                    Text(context.getString(R.string.Ok_txt))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -164,6 +204,7 @@ fun CartItemView(
 
     // Handle the image loading
     val imageUrl = cartItem.product.picUrl ?: R.drawable.default_image
+    Log.e("Cart Screen ", "Image url => $imageUrl")
     val context:Context = LocalContext.current
 
     // Cart item view layout
@@ -241,7 +282,10 @@ fun CartItemView(
 fun InvoiceView(cartItems: List<CartItem>) {
     var context:Context = LocalContext.current
     // Calculate total amount and product totals
-    val totalAmount = cartItems.sumOf { it.productTotal }
+   // val totalAmount = cartItems.sumOf { it.productTotal }
+    val totalAmount by rememberUpdatedState(
+        cartItems.sumOf { it.product.price * it.quantity }
+    )
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(

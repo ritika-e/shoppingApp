@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.repositories.OrderHistoryRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class OrderHistoryImpl(private val firebaseFirestore: FirebaseFirestore):OrderHistoryRepository {
@@ -13,6 +14,7 @@ class OrderHistoryImpl(private val firebaseFirestore: FirebaseFirestore):OrderHi
             // No limit on the query
             val querySnapshot = firebaseFirestore.collection("orders")
                 .whereEqualTo("userId", userId)
+                .orderBy("orderDate", Query.Direction.DESCENDING)
                 .get()
                 .await()
 

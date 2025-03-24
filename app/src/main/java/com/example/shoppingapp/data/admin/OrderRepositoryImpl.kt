@@ -4,13 +4,16 @@ import android.util.Log
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.repositories.OrderRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class OrderRepositoryImpl(private val firebaseFirestore: FirebaseFirestore) : OrderRepository {
 
     override suspend fun getAllOrders(): Result<List<Order>> {
         return try {
-            val querySnapshot = firebaseFirestore.collection("orders").get().await()
+            val querySnapshot = firebaseFirestore.collection("orders")
+                .orderBy("orderDate", Query.Direction.DESCENDING)
+                .get().await()
             val orders = querySnapshot.documents.mapNotNull { doc ->
                 try {
                     doc.toObject(Order::class.java)

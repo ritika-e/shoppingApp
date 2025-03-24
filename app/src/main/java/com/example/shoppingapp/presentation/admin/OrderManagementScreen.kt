@@ -37,6 +37,9 @@ import androidx.navigation.NavHostController
 import com.example.shoppingapp.R
 import com.example.shoppingapp.domain.model.Order
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,11 +87,19 @@ fun OrderManagementScreen(
 fun AdminOrderItemView(order: Order, adminOrderViewModel: AdminOrderViewModel) {
     val context: Context = LocalContext.current
 
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+    val formattedDate = try {
+        val timestamp = order.orderDate.toLongOrNull()
+        timestamp?.let { dateFormat.format(Date(it)) } ?: context.getString(R.string.unknown_dates)
+    } catch (e: Exception) {
+        context.getString(R.string.invalid_dates)
+    }
+
     // Set the status color based on the current status
     val statusColor = when (order.status) {
-        "Confirm" -> Color(0xFFFF9800)  // Orange
-        "Canceled" -> Color(0xFFE53935)  // Red
-        "Completed" -> Color(0xFF388E3C)  // Green
+        "Accept" -> Color(0xFFFF9800)  // Orange
+        "Reject" -> Color(0xFFE53935)  // Red
+        "Delivered" -> Color(0xFF388E3C)  // Green
         else -> Color.Gray  // Default gray for pending or unknown status
     }
 
@@ -106,6 +117,7 @@ fun AdminOrderItemView(order: Order, adminOrderViewModel: AdminOrderViewModel) {
         // Order ID and Total Amount
         Text(text = "Order ID: ${order.orderId}", style = MaterialTheme.typography.bodyMedium)
         Text(text = "Total Amount: $${order.totalAmount}", style = MaterialTheme.typography.bodyLarge)
+        Text(text = "Order Date: $formattedDate", style = MaterialTheme.typography.bodyLarge)
 
         // Order Status (with dynamic color)
         Text(
@@ -120,7 +132,7 @@ fun AdminOrderItemView(order: Order, adminOrderViewModel: AdminOrderViewModel) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Confirm Button
+            // Accept Button
             Button(
                 onClick = { adminOrderViewModel.updateOrderStatus(order.orderId, context.getString(R.string.confirm_btn)) },
                 enabled = order.status == "Pending"  ,  // Active only if the status is Pending
@@ -130,7 +142,7 @@ fun AdminOrderItemView(order: Order, adminOrderViewModel: AdminOrderViewModel) {
                 Text(text = context.getString(R.string.confirm_btn), style = buttonTextStyle)
             }
 
-            // Cancel Button
+            // Reject Button
             Button(
                 onClick = { adminOrderViewModel.updateOrderStatus(order.orderId, context.getString(R.string.cancel_btn)) },
                 enabled = order.status == "Pending" ,  // Active only if the status is Pending or Confirmed
@@ -140,10 +152,10 @@ fun AdminOrderItemView(order: Order, adminOrderViewModel: AdminOrderViewModel) {
                 Text(text = context.getString(R.string.cancel_btn), style = buttonTextStyle)
             }
 
-            // Complete Button (enabled if the order is confirmed)
+            // Delivered Button (enabled if the order is confirmed)
             Button(
                 onClick = { adminOrderViewModel.updateOrderStatus(order.orderId, context.getString(R.string.completed_btn)) },
-                enabled = order.status == "Confirm" || order.status == "Pending" ,  // Active only if the status is Confirmed
+                enabled = order.status == "Accept"  ,  // Active only if the status is Confirmed
                 modifier = Modifier.weight(1f),  // Increase weight to make the button wider and avoid wrapping
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))  // Green Color
             ) {

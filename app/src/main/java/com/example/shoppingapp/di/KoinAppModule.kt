@@ -38,6 +38,7 @@ import com.example.shoppingapp.domain.usecase.admin.UpdateOrderStatusUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.AddProductToCartUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.CartUseCases
+import com.example.shoppingapp.domain.usecase.productUseCases.ClearCartUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetBannersUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCartItemsUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.GetCategoriesUseCase
@@ -111,7 +112,7 @@ val appModule = module{
     single { GetCategoriesUseCase(get()) }
     single { GetBannersUseCase(get()) }
     single { AddProductToCartUseCase(get()) }
-    single { CartUseCases(get(),get(),get(),get()) }
+    single { CartUseCases(get(),get(),get(),get(),get()) }
     single {GetBannersUseCase(get())}
     single { GetCartItemsUseCase(get()) }
     single { GetCategoriesUseCase(get()) }
@@ -135,6 +136,7 @@ val appModule = module{
     single { FetchOrdersUseCase(get()) }
     single { UpdateOrderStatusUseCase(get()) }
     single { GetProductByIdUseCase(get()) }
+    single { ClearCartUseCase(get()) }
 
     // viewModel
     viewModel { SplashViewModel() }
