@@ -2,9 +2,11 @@ package com.example.shoppingapp.presentation.admin
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -72,7 +74,9 @@ fun CustomerListScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 // Show loading indicator if data is being fetched
                 if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 } else {
                     // If customers are loaded, show their details
                     LazyColumn(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -101,7 +105,7 @@ fun CustomerItemView(customer: Customer, navController: NavHostController) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Display customer details
             Text(
-                text = "User Id: ${customer.customerId}",
+                text = "User Id: ${customer.userId}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -130,14 +134,14 @@ fun CustomerItemView(customer: Customer, navController: NavHostController) {
             ) {
                 // View Details Button
                 Button(
-                    onClick = { navController.navigate("customerDetails/${customer.customerId}") },
+                    onClick = { navController.navigate("customerDetails/${customer.userId}") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(text = context.getString(R.string.show_details))
                 }
 
                 // Delete Button
-                Button(
+               /* Button(
                     onClick = {
                         // Call the delete function from ViewModel
                         // customerViewModel.deleteCustomer(customer.customerId) // Uncomment when delete functionality is implemented
@@ -146,7 +150,7 @@ fun CustomerItemView(customer: Customer, navController: NavHostController) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(text = "Delete", color = Color.White)
-                }
+                }*/
             }
         }
     }

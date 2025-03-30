@@ -121,10 +121,10 @@ class MainActivity : ComponentActivity() {
             composable("customer_list"){
                 CustomerListScreen(navController)
             }
-            composable("customerDetails/{customerId}"){ backStackEntry ->
-                val customerId = backStackEntry.arguments?.getString("customerId")
-                if (customerId != null) {
-                    CustomerDetailsScreen(navController,customerId = customerId)
+            composable("customerDetails/{userId}"){ backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId")
+                if (userId != null) {
+                    CustomerDetailsScreen(navController,customerId = userId)
                 }
             }
         }

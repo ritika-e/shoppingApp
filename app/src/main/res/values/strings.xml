@@ -86,5 +86,6 @@
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
     <string name="completed_btn">Complete</string>
+    <string name="logout_txt">Are you sure you want to logout?</string>
 
 </resources>
