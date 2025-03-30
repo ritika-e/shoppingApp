@@ -17,8 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+open class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
+                              private val firestore: FirebaseFirestore
     ) : AuthRepository {
 
     override suspend fun signUp(
@@ -83,7 +83,7 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
     }
 
 
-    override suspend fun login(email: String, password: String): Result<String> {
+  open  override suspend fun login(email: String, password: String): Result<String> {
 
         return try {
             // Sign in the user with email and password
@@ -115,7 +115,7 @@ class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
         } catch (e: Exception) {
             // Catch any other unexpected exceptions
             val errorMessage = e.message
-            Log.e("LoginError", "Unexpected error: ${e.message}")
+//            Log.e("LoginError", "Unexpected error: ${e.message}")
             Result.failure(Exception("$errorMessage"))
         }
     }

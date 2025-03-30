@@ -19,7 +19,12 @@ class InMemoryCartDataSourceRepository: CartDataSourceRepository {
     override fun getCartItems(): List<CartItem> = cartItems
 
     override fun updateProductQuantity(productId: Int, quantity: Int) {
-        cartItems.find { it.product.productId == productId }?.quantity = quantity
+        //cartItems.find { it.product.productId == productId }?.quantity = quantity
+        val cartItem = cartItems.find { it.product.productId == productId }
+        cartItem?.let {
+            it.quantity = quantity
+            it.productTotal = it.product.price * quantity // Recalculate productTotal
+        }
     }
 
     override fun removeProduct(productId: Int) {

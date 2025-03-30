@@ -8,7 +8,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
-class ProductManagementRepositoryImpl(
+open class ProductManagementRepositoryImpl(
     private val database: FirebaseDatabase,
     private val storage: FirebaseStorage
 ): ProductManagementRespository {

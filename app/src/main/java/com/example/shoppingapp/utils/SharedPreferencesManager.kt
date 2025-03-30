@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 
-class SharedPreferencesManager(context: Context) {
+open class SharedPreferencesManager(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("UserSession", Context.MODE_PRIVATE)
 
-    fun saveUserData(userId: String, userName: String, userRole: String) {
+    open fun saveUserData(userId: String, userName: String, userRole: String) {
         val editor = sharedPreferences.edit()
         Log.e("User SharedPref", "User not Null => $userId $userName $userRole")
         editor.putString("user_id", userId)
@@ -17,7 +17,7 @@ class SharedPreferencesManager(context: Context) {
         editor.apply()
     }
 
-    fun getUserData(): UserData {
+    open fun getUserData(): UserData {
         val userId = sharedPreferences.getString("user_id", null)
         val userName = sharedPreferences.getString("user_name", null)
         val userRole = sharedPreferences.getString("user_role", null)
@@ -29,7 +29,7 @@ class SharedPreferencesManager(context: Context) {
         )
     }
 
-    fun clearUserData() {
+    open  fun clearUserData() {
         val editor = sharedPreferences.edit()
         editor.remove("user_id")
         editor.remove("user_name")
@@ -40,7 +40,7 @@ class SharedPreferencesManager(context: Context) {
     }
 
     // New method to check if user is logged in
-    fun isLoggedIn(): Boolean {
+    open fun isLoggedIn(): Boolean {
         val userId = sharedPreferences.getString("user_id", null)
         return !userId.isNullOrEmpty() // If user_id exists, the user is logged in
     }

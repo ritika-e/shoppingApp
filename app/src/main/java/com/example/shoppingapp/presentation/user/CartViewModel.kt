@@ -13,45 +13,65 @@ import com.example.shoppingapp.utils.SharedPreferencesManager
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 
-class CartViewModel(private val cartUseCases: CartUseCases,
-                    private val placeOrderUseCase: PlaceOrderUseCase
-        ) : ViewModel() {
+open class CartViewModel(private val cartUseCases: CartUseCases,
+                         private val placeOrderUseCase: PlaceOrderUseCase
+) : ViewModel() {
 
-    private val _cartItems = MutableLiveData<List<CartItem>?>()
+    val _cartItems = MutableLiveData<List<CartItem>?>()
     val cartItems: MutableLiveData<List<CartItem>?> get() = _cartItems
 
-    private val _orderStatus = MutableLiveData<String>()
+    val _orderStatus = MutableLiveData<String>()
     val orderStatus: LiveData<String> get() = _orderStatus
 
     init {
-         loadCartItems()
+        initializeCartItems()
     }
 
-    private fun loadCartItems() {
+    private fun initializeCartItems() {
+        // This method can be overridden in subclasses, and it's safe to call here.
+        loadCartItems()
+    }
+
+   /* private fun loadCartItems() {
+        cartUseCases.getCartItemsUseCase.let {
+            cartItems.value = it.execute()
+        } ?: run {
+            // Handle the case where it's null, maybe log an error or provide a fallback value
+            cartItems.value = emptyList()
+        }
+    }*/
+
+    open fun loadCartItems() {
         _cartItems.value = cartUseCases.getCartItemsUseCase.execute() ?: emptyList()
     }
 
-  fun addProductToCart(product: ItemsModel) {
-      val existingCartItems = _cartItems.value?.toMutableList() ?: mutableListOf()
-      val existingCartItem = existingCartItems.find { it.product.productId == product.productId }
+    open fun addProductToCart(product: ItemsModel) {
+        val existingCartItems = _cartItems.value?.toMutableList() ?: mutableListOf()
+        val existingCartItem = existingCartItems.find { it.product.productId == product.productId }
 
-      if (existingCartItem != null) {
-          // If the product is already in the cart, increase the quantity
-          existingCartItem.quantity++
-      } else {
-          // Otherwise, add a new CartItem
-          existingCartItems.add(CartItem(product, 1))
-      }
+        if (existingCartItem != null) {
+            // If the product is already in the cart, increase the quantity
+            existingCartItem.quantity++
+        } else {
+            // Otherwise, add a new CartItem
+            existingCartItems.add(CartItem(product, 1))
+        }
 
-      _cartItems.value = existingCartItems
-      // Persist updated cart (save to a database)
-      cartUseCases.addProductToCartUseCase.execute(product)
-  }
+        _cartItems.value = existingCartItems
+        // Persist updated cart (save to a database)
+        cartUseCases.addProductToCartUseCase.execute(product)
+    }
 
-    fun updateProductQuantity(productId: Int, newQuantity: Int) {
+    open  fun updateProductQuantity(productId: Int, newQuantity: Int) {
         val updatedCartItems = _cartItems.value?.map {
             if (it.product.productId == productId) {
-                it.copy(quantity = newQuantity)
+                //  it.copy(quantity = newQuantity)
+                // Corrected for testing
+                val updatedItem = it.copy(
+                    quantity = newQuantity,
+                    productTotal = it.product.price * newQuantity // Recalculate productTotal
+                )
+                updatedItem
             } else {
                 it
             }
@@ -62,14 +82,25 @@ class CartViewModel(private val cartUseCases: CartUseCases,
 
     }
 
-    fun removeProductFromCart(productId: Int) {
-        val updatedCartItems = _cartItems.value?.filter { it.product.productId != productId }
-        _cartItems.value = updatedCartItems
+    open  fun removeProductFromCart(productId: Int) {
+
+        Log.d("CartViewModel", "Before updating cart: ${_cartItems.value}")
+
+        // val updatedCartItems = _cartItems.value?.filter { it.product.productId != productId }
+        val updatedCartItems = _cartItems.value?.filterNot { it.product.productId == productId }
+
+        if (_cartItems.value != updatedCartItems) {
+            _cartItems.value = updatedCartItems
+        }
+        //  _cartItems.value = updatedCartItems
+
+        Log.d("CartViewModel", "Cart updated: $updatedCartItems")
+
         cartUseCases.removeProductFromCartUseCase.execute(productId)
     }
 
     // Place order function to call the use case
-    fun placeOrder() {
+    open  fun placeOrder() {
         val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
         val cartItemsList = _cartItems.value ?: emptyList()
 
@@ -104,7 +135,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
         }
     }
 
-    fun clearCart() {
+    open  fun clearCart() {
         cartUseCases.clearCartUseCase.execute() // Calls the repository to clear the cart
     }
 }

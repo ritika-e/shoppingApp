@@ -19,13 +19,12 @@ import com.example.shoppingapp.domain.usecase.admin.GetProductByIdUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import kotlinx.coroutines.launch
 
-class ProductViewModel(
+open class ProductViewModel(
     private val addProductUseCase: AddProductUseCase,
-    private val updateProductUseCase: UpdateProductUseCase,
+    var updateProductUseCase: UpdateProductUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
     private val getAllProductsUseCase: GetAllProductsUseCase,
     private val getProductByIdUseCase: GetProductByIdUseCase,
-    private val fbProductRepository: FirebaseProductRepository,
 ) : ViewModel() {
 
     private val _imageUploadProgress = MutableLiveData<Float>()
@@ -45,7 +44,7 @@ class ProductViewModel(
 
     var selectedImageUri: Uri? by mutableStateOf(null)
 
-    fun addProductWithImage(
+    open   fun addProductWithImage(
         product: ProductList,
         selectedImageUri: Uri,
         onProgress: (Float) -> Unit,
@@ -60,7 +59,7 @@ class ProductViewModel(
         }
     }
 
-    fun getProductById(productId: Int) {
+    open  fun getProductById(productId: Int) {
         Log.e("ViewModel getProductById","getProductById productId $productId")
         viewModelScope.launch {
             _isLoading.value = true
@@ -70,7 +69,7 @@ class ProductViewModel(
         }
     }
 
-   fun getProducts() {
+    open  fun getProducts() {
        viewModelScope.launch {
            _isLoading.value = true
            val result = getAllProductsUseCase.execute()
@@ -79,7 +78,7 @@ class ProductViewModel(
        }
    }
 
-    fun updateProduct(productId: Int, product: ProductList) {
+    open   fun updateProduct(productId: Int, product: ProductList) {
         Log.d("ProductViewModel", "Updating product with id: $productId")
         viewModelScope.launch {
             _isLoading.value = true
@@ -88,7 +87,7 @@ class ProductViewModel(
         }
     }
 
-    fun deleteProduct(productId: Int) {
+    open fun deleteProduct(productId: Int) {
         viewModelScope.launch {
             deleteProductUseCase.execute(productId)
         }

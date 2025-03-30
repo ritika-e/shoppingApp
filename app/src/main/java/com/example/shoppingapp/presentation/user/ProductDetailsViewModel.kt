@@ -31,7 +31,7 @@ class ProductDetailsViewModel(
 ) : ViewModel() {
 
     private val _category = MutableLiveData<List<CategoryModel>>()
-    val categories: MutableLiveData<List<CategoryModel>> = _category
+    val categories: LiveData<List<CategoryModel>> = _category
 
     private val _banner =
         MutableLiveData<List<SliderModel>>(emptyList()) // Initialize with an empty list
@@ -45,7 +45,7 @@ class ProductDetailsViewModel(
 
     // LiveData for error messages
     private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    val error: LiveData<String>  = _error
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -54,7 +54,12 @@ class ProductDetailsViewModel(
 
     fun loadProductDetails(productId: Int) {
         getProductDetailsUseCase.execute(productId).observeForever { product ->
-            _productDetails.value = product
+            //_productDetails.value = product
+            if (product == null) {
+                _error.value = "Product not found"
+            } else {
+                _productDetails.value = product
+            }
         }
     }
 
@@ -66,16 +71,32 @@ class ProductDetailsViewModel(
 
     fun loadCategories() {
         getCategoriesUseCase.execute().observeForever { categories ->
-            _category.value = categories
+            // _category.value = categories
+            if (categories.isNullOrEmpty()) {
+                _error.value = "Failed to load categories"
+            } else {
+                _category.value = categories
+            }
         }
     }
 
+    /* fun loadBanners() {
+         getBannersUseCase.execute().observeForever { bannersList ->
+             Log.d("ProductDetailsViewModel", "Received banners from UseCase: $bannersList")
+             _banner.value = bannersList // Update ViewModel state with the fetched banners
+         }
+     }*/
+
     fun loadBanners() {
         getBannersUseCase.execute().observeForever { bannersList ->
-            Log.d("ProductDetailsViewModel", "Received banners from UseCase: $bannersList")
-            _banner.value = bannersList // Update ViewModel state with the fetched banners
+            if (bannersList.isNullOrEmpty()) {
+                _error.value = "Failed to load banners"
+            } else {
+                _banner.value = bannersList // Update ViewModel state with the fetched banners
+            }
         }
     }
+
 
     fun loadCategoryItem(categoryId: String) {
         _isLoading.value = true

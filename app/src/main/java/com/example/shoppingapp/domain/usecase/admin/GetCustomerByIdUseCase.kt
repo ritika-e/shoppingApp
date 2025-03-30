@@ -3,9 +3,9 @@ package com.example.shoppingapp.domain.usecase.admin
 import com.example.shoppingapp.domain.model.Customer
 import com.example.shoppingapp.domain.repositories.CustomerRepository
 
-class GetCustomerByIdUseCase(private val customerRepository: CustomerRepository) {
+open class GetCustomerByIdUseCase(private val customerRepository: CustomerRepository) {
 
-    suspend fun execute(customerId: String): Result<Customer> {
+  open  suspend fun execute(customerId: String): Result<Customer> {
         val customer = customerRepository.getCustomerById(customerId)
 
         return if (customer != null) {
