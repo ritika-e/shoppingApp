@@ -65,7 +65,8 @@ fun CustomerListScreen(
                 title = { Text(context.getString(R.string.customer_list), style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt))
                     }
                 }
             )
@@ -140,17 +141,7 @@ fun CustomerItemView(customer: Customer, navController: NavHostController) {
                     Text(text = context.getString(R.string.show_details))
                 }
 
-                // Delete Button
-               /* Button(
-                    onClick = {
-                        // Call the delete function from ViewModel
-                        // customerViewModel.deleteCustomer(customer.customerId) // Uncomment when delete functionality is implemented
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Delete", color = Color.White)
-                }*/
+            
             }
         }
     }

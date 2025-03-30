@@ -19,4 +19,8 @@ class CartRepositoryImpl(private val cartDataSourceRepository: CartDataSourceRep
     override fun removeProductFromCart(productId: Int) {
         cartDataSourceRepository.removeProduct(productId)
     }
+
+    override fun clearCart() {
+        cartDataSourceRepository.clearCart()  // Clears cart items
+    }
 }

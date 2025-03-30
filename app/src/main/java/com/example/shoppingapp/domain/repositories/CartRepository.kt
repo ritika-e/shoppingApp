@@ -8,4 +8,5 @@ interface CartRepository {
     fun getCartItems(): List<CartItem>
     fun updateProductQuantity(productId: Int, quantity: Int)
     fun removeProductFromCart(productId: Int)
+    fun clearCart()
 }

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.sharp.ExitToApp
 import androidx.compose.material3.CircularProgressIndicator
@@ -176,8 +177,7 @@ fun CustomerDashboardScreen(
                             .size(24.dp)
                             .clickable {
                                 showDialog = true
-                                // Log out the user
-                              //viewModel.logout()
+
                             }
                     )
                 }
@@ -199,7 +199,7 @@ fun CustomerDashboardScreen(
                 }
             }
             item {
-                SectionTitle(context.getString(R.string.Categories_txt), context.getString(R.string.See_all_txt))
+                SectionTitle(context.getString(R.string.Categories_txt))
             }
             item {
                 if (showCategoryLoading) {
@@ -216,8 +216,7 @@ fun CustomerDashboardScreen(
                 }
             }
             item {
-                SectionTitle(context.getString(R.string.Recommendation_txt),
-                    context.getString(R.string.See_all_txt))
+                SectionTitle(context.getString(R.string.Recommendation_txt))
             }
             item {
                 if (showRecommendedLoading) {
@@ -409,14 +408,14 @@ fun IndicatorDot(modifier: Modifier = Modifier,
     }
 }
 @Composable
-fun SectionTitle(title:String,actionText:String){
+fun SectionTitle(title:String){
     Row (modifier = Modifier
         .fillMaxSize()
         .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         Text(text = title, color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Text(text = actionText, color = MaterialTheme.colorScheme.primary)
+       // Text(text = actionText, color = MaterialTheme.colorScheme.primary)
 
     }
 }
@@ -433,11 +432,10 @@ fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
             text = context.getString(R.string.Home_txt), onItemClick = { onItemClick(" ") })
         BottomMenuItem(icon = Icons.Default.ShoppingCart,
             text = context.getString(R.string.Cart_txt), onItemClick = { onItemClick("cart") })
-        /*BottomMenuItem(icon = Icons.Default.Favorite, text = "Favorite", onItemClick = { onItemClick(" ") })*/
         BottomMenuItem(icon = Icons.Default.List,
             text = context.getString(R.string.Orders_txt), onItemClick = { onItemClick("order_history") })
-        BottomMenuItem(icon = Icons.Default.Person,
-            text = context.getString(R.string.Profile_txt), onItemClick = { onItemClick("cart") })
+        BottomMenuItem(icon = Icons.Default.Phone,
+            text = context.getString(R.string.support_txt), onItemClick = { onItemClick("supportScreen") })
     }
 }
 

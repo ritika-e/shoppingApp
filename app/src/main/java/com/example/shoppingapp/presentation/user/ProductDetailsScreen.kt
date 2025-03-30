@@ -82,7 +82,9 @@ fun ProductDetailsScreen(
                 .height(200.dp),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         }
     } else {
         /*val product = productDetails!!
@@ -189,7 +191,8 @@ fun ProductDetailsScreen(
                             val product = ItemsModel(
                                 productId = productDetails!!.productId,
                                 title = productDetails!!.title,
-                                price = productDetails!!.price
+                                price = productDetails!!.price,
+                                picUrl = productDetails!!.picUrl
                             )
                             // Add the product to the cart
                             cartViewModel.addProductToCart(product)

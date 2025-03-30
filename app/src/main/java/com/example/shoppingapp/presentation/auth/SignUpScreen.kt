@@ -1,6 +1,7 @@
 package com.example.shoppingapp.presentation.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -194,6 +195,7 @@ fun SignUpScreen(
             if (isLoading) {
                 CircularProgressIndicator() // Show loading spinner
             } else {
+                Log.e("Sign UI 1","Button Press Log")
             CommonButton(
                 text = context.getString(R.string.Signup_btn),
 
@@ -208,6 +210,7 @@ fun SignUpScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+                Log.e("Sign UI 2","Button Press Log")
             }
             Spacer(modifier = Modifier.height(16.dp))
 
