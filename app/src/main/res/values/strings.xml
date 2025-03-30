@@ -84,6 +84,10 @@
     <string name="customer_no_order">No orders found for this customer.</string>
     <string name="show_details">Show Details</string>
     <string name="order_list">Admin Order List</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="completed_btn">Complete</string>
+    <string name="logout_txt">Are you sure you want to logout?</string>
     <string name="confirm_btn">Accept</string>
     <string name="cancel_btn">Reject</string>
     <string name="completed_btn">Delivered</string>

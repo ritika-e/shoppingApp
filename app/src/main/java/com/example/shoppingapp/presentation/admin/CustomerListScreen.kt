@@ -106,7 +106,7 @@ fun CustomerItemView(customer: Customer, navController: NavHostController) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Display customer details
             Text(
-                text = "User Id: ${customer.customerId}",
+                text = "User Id: ${customer.userId}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -135,23 +135,13 @@ fun CustomerItemView(customer: Customer, navController: NavHostController) {
             ) {
                 // View Details Button
                 Button(
-                    onClick = { navController.navigate("customerDetails/${customer.customerId}") },
+                    onClick = { navController.navigate("customerDetails/${customer.userId}") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(text = context.getString(R.string.show_details))
                 }
 
-                // Delete Button
-                /*Button(
-                    onClick = {
-                        // Call the delete function from ViewModel
-                        // customerViewModel.deleteCustomer(customer.customerId) // Uncomment when delete functionality is implemented
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = context.getString(R.string.delete_btn), color = Color.White)
-                }*/
+            
             }
         }
     }

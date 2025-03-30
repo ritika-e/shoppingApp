@@ -69,6 +69,7 @@ import com.example.shoppingapp.domain.model.CategoryModel
 import com.example.shoppingapp.domain.model.ItemsModel
 import com.example.shoppingapp.domain.model.SliderModel
 import com.example.shoppingapp.presentation.auth.LoginViewModel
+import com.example.shoppingapp.presentation.common.LogoutDialog
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import org.koin.androidx.compose.koinViewModel
 import org.koin.java.KoinJavaComponent.getKoin
@@ -92,6 +93,9 @@ fun CustomerDashboardScreen(
     val userName = sharedPreferencesManager.getUserData().userName
     val logoutStatus = viewModel.logoutStatus.observeAsState().value
 
+    var showDialog by remember { mutableStateOf(false) }
+
+
     LaunchedEffect(logoutStatus) {
         if (logoutStatus == context.getString(R.string.Logged_out_txt)) {
             Toast.makeText(navHostController.context,context.getString(R.string.Log_out_msg_txt),
@@ -114,14 +118,7 @@ fun CustomerDashboardScreen(
     if (banners.isNotEmpty()) {
         showBannerLoading = false
     }
-   /* LaunchedEffect(Unit) {
-        productDetailsViewModel.loadBanners()
-        productDetailsViewModel.banners.observeForever{
-            banners.clear()
-            banners.addAll(it)
-            showBannerLoading = false
-        }
-    }*/
+
 
     // Category
     LaunchedEffect(Unit) {
@@ -179,12 +176,8 @@ fun CustomerDashboardScreen(
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
-                                // Log out the user
-                              viewModel.logout()
-                                navHostController.navigate("login") {
-                                    popUpTo("customer_dashboard") { inclusive = true }  // Clear the dashboard from the back stack
-                                    launchSingleTop = true
-                                }
+                                showDialog = true
+
                             }
                     )
                 }
@@ -254,6 +247,17 @@ fun CustomerDashboardScreen(
             }
         )
     }
+
+    LogoutDialog(
+        showDialog = showDialog,
+        onConfirm = {
+            viewModel.logout()  // Handle the logout logic
+
+        },
+        onDismiss = {
+            showDialog = false // Close the dialog when 'No' is clicked
+        }
+    )
 }
 
 @Composable
