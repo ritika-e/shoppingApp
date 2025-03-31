@@ -1,9 +1,9 @@
 package com.example.shoppingapp.domain.usecase.productUseCases
 
-class CartUseCases(
-    val addProductToCartUseCase: AddProductToCartUseCase,
-    val getCartItemsUseCase: GetCartItemsUseCase,
-    val updateProductQuantityUseCase: UpdateProductQuantityUseCase,
-    val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
-    val clearCartUseCase: ClearCartUseCase
+open class CartUseCases(
+  open  val addProductToCartUseCase: AddProductToCartUseCase,
+   open val getCartItemsUseCase: GetCartItemsUseCase,
+    open val updateProductQuantityUseCase: UpdateProductQuantityUseCase,
+    open val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
+    open val clearCartUseCase: ClearCartUseCase
 )

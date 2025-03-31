@@ -3,4 +3,4 @@ package com.example.shoppingapp.domain.model
 data class CartItem(
     val product: ItemsModel = ItemsModel(),
     var quantity: Int = 0,
-    val productTotal: Double = product.price * quantity)
+    var productTotal: Double = product.price * quantity)

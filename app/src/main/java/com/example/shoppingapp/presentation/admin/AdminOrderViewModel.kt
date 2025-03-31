@@ -28,7 +28,7 @@ class AdminOrderViewModel(
     }
 
     // Fetch all orders
-    private fun fetchOrders() {
+    fun fetchOrders() {
         viewModelScope.launch {
             _isLoading.value = true
             val result = fetchOrdersUseCase.execute()

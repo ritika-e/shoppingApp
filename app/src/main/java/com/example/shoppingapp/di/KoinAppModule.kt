@@ -141,9 +141,9 @@ val appModule = module{
     // viewModel
     viewModel { SplashViewModel() }
     viewModel { LoginViewModel(get(),get()) }
-    viewModel { SignupViewModel(get()) }
+    viewModel { SignupViewModel(get(),get()) }
     viewModel { ForgetPasswordViewModel(get()) }
-    viewModel { ProductViewModel(get(),get(),get(),get(),get(),get()) }
+    viewModel { ProductViewModel(get(),get(),get(),get(),get()) }
     viewModel { ProductDetailsViewModel(get(), get(), get(),get() ,get()) }
     viewModel { CartViewModel(get(),get()) }
     viewModel { OrderHistoryViewModel(get(),get()) }

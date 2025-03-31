@@ -92,14 +92,14 @@ fun OrderHistoryScreen(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
-                } else if (orderHistory.isEmpty()) {
+                } else if (orderHistory!!.isEmpty()) {
                     Text(
                         context.getString(R.string.no_orders_found),
                         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)
                     )
                 } else {
                     LazyColumn {
-                        items(orderHistory) { order ->
+                        items(orderHistory!!) { order ->
                             OrderItemView(navController,order)
                         }
                     }

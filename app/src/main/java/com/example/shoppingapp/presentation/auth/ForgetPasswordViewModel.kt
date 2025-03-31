@@ -30,7 +30,7 @@ class ForgetPasswordViewModel(private val resetPasswordUseCase: ResetPasswordUse
             } catch (e: Exception) {
                 _error.postValue("Error occurred: ${e.message}")
                 _isLoading.value = false
-                _resetResult.postValue(false) // Indicate failure
+               // _resetResult.postValue(false) // Indicate failure
             }
         }
     }

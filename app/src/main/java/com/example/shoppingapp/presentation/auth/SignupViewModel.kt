@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 import kotlin.Result
 
-class SignupViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
-    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
+open class SignupViewModel(private val signUpUseCase: SignUpUseCase,
+                           private val sharedPreferencesManager: SharedPreferencesManager): ViewModel() {
     // State for form fields
     var name by mutableStateOf("")
     var email by mutableStateOf("")
@@ -39,21 +39,21 @@ class SignupViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
     val signUpStatus: LiveData<Result<String>?> get() = _signUpStatus
 
 
-   fun signUp(name: String, email: String, password: String, role: String) {
-       _isLoading.value = true
-       viewModelScope.launch {
-           val result = signUpUseCase(name,email, password, role)
-           _signUpStatus.value = result  // Assign the Result from use case
+    open fun signUp(name: String, email: String, password: String, role: String) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            val result = signUpUseCase(name,email, password, role)
+            _signUpStatus.value = result  // Assign the Result from use case
 
-           if (result.isSuccess) {
-               // Save user data in SharedPreferences after successful sign-up
-               val userId = result.getOrNull() ?: return@launch
-               sharedPreferencesManager.saveUserData(userId, name ?: "", role )
-               _isSignedUp.value = true
-               _isLoading.value = false
-           }else{
-               _isLoading.value = false
-           }
-       }
-   }
+            if (result.isSuccess) {
+                // Save user data in SharedPreferences after successful sign-up
+                val userId = result.getOrNull() ?: return@launch
+                sharedPreferencesManager.saveUserData(userId, name ?: "", role )
+                _isSignedUp.value = true
+                _isLoading.value = false
+            }else{
+                _isLoading.value = false
+            }
+        }
+    }
 }

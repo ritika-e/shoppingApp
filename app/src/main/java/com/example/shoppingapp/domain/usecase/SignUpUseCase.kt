@@ -4,8 +4,8 @@ import com.example.shoppingapp.domain.repositories.AuthRepository
 import kotlin.Result
 
 
-class SignUpUseCase(private val userRepository: AuthRepository) {
-    suspend operator fun invoke(name:String, email: String, password: String, role: String): Result<String> {
+open class SignUpUseCase(private val userRepository: AuthRepository) {
+   open suspend operator fun invoke(name:String, email: String, password: String, role: String): Result<String> {
         return userRepository.signUp(name, email, password, role)
     }
 }

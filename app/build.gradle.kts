@@ -42,7 +42,8 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
+       // kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -137,6 +138,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.15.1")  // Or the latest version
 //    kapt 'com.github.bumptech.glide:compiler:4.15.1'
 
+    // Robolectric for unit tests
+    testImplementation ("org.robolectric:robolectric:4.10.3")
 
 
 

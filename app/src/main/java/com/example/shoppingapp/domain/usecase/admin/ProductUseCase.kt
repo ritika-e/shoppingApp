@@ -14,9 +14,9 @@ class ProductUseCase {
 }
 
 
-class AddProductUseCase(private val productRepository: FirebaseProductRepository) {
+open class AddProductUseCase(private val productRepository: FirebaseProductRepository) {
 
-    suspend fun execute(
+    open suspend fun execute(
         product: ProductList,
         onProgress: (Float) -> Unit,
         onComplete: (Boolean) -> Unit
@@ -54,32 +54,32 @@ class AddProductUseCase(private val productRepository: FirebaseProductRepository
             onComplete(false)
         }
     }
-    private suspend fun saveProduct(updatedProduct: ProductList): Boolean {
+    open suspend fun saveProduct(updatedProduct: ProductList): Boolean {
         return withContext(Dispatchers.IO) {
             productRepository.saveProductDataToDatabase(updatedProduct)
         }
     }
 }
 
-    class UpdateProductUseCase(private val productRepository: ProductManagementRespository) {
+open class UpdateProductUseCase(private val productRepository: ProductManagementRespository) {
         suspend fun execute(productId: Int, product: ProductList) {
             productRepository.updateProduct(productId, product)
         }
     }
 
-    class DeleteProductUseCase(private val productRepository: ProductManagementRespository) {
+open class DeleteProductUseCase(private val productRepository: ProductManagementRespository) {
         suspend fun execute(productId: Int) {
             productRepository.deleteProduct(productId)
         }
     }
 
-    class GetAllProductsUseCase(private val productRepository: ProductManagementRespository) {
+open class GetAllProductsUseCase(private val productRepository: ProductManagementRespository) {
         suspend fun execute(): List<ProductList> {
             return productRepository.getProducts()
         }
     }
 
-class GetProductByIdUseCase(private val productRepository: ProductManagementRespository) {
+open class GetProductByIdUseCase(private val productRepository: ProductManagementRespository) {
     suspend fun execute(productId: Int): ProductList? {
         Log.e("Use case","GetProductByIdUseCase productId $productId")
         return productRepository.getProductById(productId)

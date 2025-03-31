@@ -13,8 +13,8 @@ import com.example.shoppingapp.utils.SharedPreferencesManager
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 
-class CartViewModel(private val cartUseCases: CartUseCases,
-                    private val placeOrderUseCase: PlaceOrderUseCase
+open class CartViewModel(private val cartUseCases: CartUseCases,
+                         private val placeOrderUseCase: PlaceOrderUseCase
         ) : ViewModel() {
 
     private val _cartItems = MutableLiveData<List<CartItem>?>()
@@ -51,10 +51,16 @@ class CartViewModel(private val cartUseCases: CartUseCases,
       cartUseCases.addProductToCartUseCase.execute(product)
   }
 
-    fun updateProductQuantity(productId: Int, newQuantity: Int) {
+    open  fun updateProductQuantity(productId: Int, newQuantity: Int) {
         val updatedCartItems = _cartItems.value?.map {
             if (it.product.productId == productId) {
-                it.copy(quantity = newQuantity)
+                //  it.copy(quantity = newQuantity)
+                // Corrected for testing
+                val updatedItem = it.copy(
+                    quantity = newQuantity,
+                    productTotal = it.product.price * newQuantity // Recalculate productTotal
+                )
+                updatedItem
             } else {
                 it
             }
@@ -65,9 +71,20 @@ class CartViewModel(private val cartUseCases: CartUseCases,
 
     }
 
-    fun removeProductFromCart(productId: Int) {
-        val updatedCartItems = _cartItems.value?.filter { it.product.productId != productId }
-        _cartItems.value = updatedCartItems
+    open  fun removeProductFromCart(productId: Int) {
+
+        Log.d("CartViewModel", "Before updating cart: ${_cartItems.value}")
+
+        // val updatedCartItems = _cartItems.value?.filter { it.product.productId != productId }
+        val updatedCartItems = _cartItems.value?.filterNot { it.product.productId == productId }
+
+        if (_cartItems.value != updatedCartItems) {
+            _cartItems.value = updatedCartItems
+        }
+        //  _cartItems.value = updatedCartItems
+
+        Log.d("CartViewModel", "Cart updated: $updatedCartItems")
+
         cartUseCases.removeProductFromCartUseCase.execute(productId)
     }
 

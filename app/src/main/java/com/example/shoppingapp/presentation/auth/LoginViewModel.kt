@@ -28,10 +28,10 @@ import java.io.IOException
  */
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
-    private val userUseCase: UserUseCase
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) : ViewModel() {
 
-    val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
+    //  val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
 
     // LiveData to hold login status
     private val _loginStatus = MutableLiveData<Result<String>?>()
@@ -67,9 +67,9 @@ class LoginViewModel(
         }
     }
 
-    fun getUserRoleFromSharedPrefs(): String? {
-        return sharedPreferencesManager.getUserData().userRole
-    }
+    /* fun getUserRoleFromSharedPrefs(): String? {
+         return sharedPreferencesManager.getUserData().userRole
+     }*/
 
     fun fetchUserRoleFromSharedPrefs() {
         val role = sharedPreferencesManager.getUserData().userRole
