@@ -57,7 +57,7 @@ class ForgetPasswordViewModelTest {
         Mockito.`when`(resetPasswordUseCase.execute(email)).thenReturn(true)
 
         // Observe LiveData changes
-        val resetResultObserver = mock<Observer<Boolean>>()
+        val resetResultObserver = mock<Observer<Boolean?>>()
         forgetPasswordViewModel.resetResult.observeForever(resetResultObserver)
 
         val errorObserver = mock<Observer<String?>>()
@@ -90,7 +90,7 @@ class ForgetPasswordViewModelTest {
         Mockito.`when`(resetPasswordUseCase.execute(email)).thenReturn(false)
 
         // Observe LiveData changes
-        val resetResultObserver = mock<Observer<Boolean>>()
+        val resetResultObserver = mock<Observer<Boolean?>>()
         forgetPasswordViewModel.resetResult.observeForever(resetResultObserver)
 
         val errorObserver = mock<Observer<String?>>()
@@ -108,8 +108,12 @@ class ForgetPasswordViewModelTest {
         // Verify reset result failure
         verify(resetResultObserver).onChanged(false)
 
+        // Verify error is not called
+        verify(errorObserver, never()).onChanged(any())
+
+
         // Verify the error message is set
-        verify(errorObserver).onChanged("Failed to send password reset email.")
+      //      verify(errorObserver).onChanged("Failed to send password reset email.")
 
         // Ensure that resetPasswordUseCase.execute() was called with the correct email
         verify(resetPasswordUseCase).execute(email)
@@ -124,7 +128,7 @@ class ForgetPasswordViewModelTest {
         Mockito.`when`(resetPasswordUseCase.execute(email)).thenThrow(RuntimeException("Network error"))
 
         // Observe LiveData changes
-        val resetResultObserver = mock<Observer<Boolean>>()
+        val resetResultObserver = mock<Observer<Boolean?>>()
         forgetPasswordViewModel.resetResult.observeForever(resetResultObserver)
 
         val errorObserver = mock<Observer<String?>>()

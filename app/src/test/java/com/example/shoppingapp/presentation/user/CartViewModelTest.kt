@@ -264,7 +264,7 @@ class CartViewModelTest {
 
     @Test
     fun testRemoveProductFromCart() = runTest {
-        // Mock product and cart items
+        // Setup product and initial cart state
         val product = ItemsModel(productId = 1, title = "Product 1", price = 10.0)
         val cartItem = CartItem(product = product, quantity = 1)
 
@@ -286,11 +286,10 @@ class CartViewModelTest {
         // Ensure the test dispatcher completes all coroutine work
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Add logging to verify the observer is called correctly
-        // We will check for the expected result after some delay
-        delay(100)  // Allow time for LiveData updates
+        // Allow time for LiveData updates to complete
+        delay(100)  // Wait for any side-effects
 
-        // Verify the observer was called exactly once
+        // Verify the observer was called exactly once with the updated cart (empty cart)
         val expectedCartItems = emptyList<CartItem>()
         verify(cartItemsObserver, times(1)).onChanged(expectedCartItems)
 
@@ -300,6 +299,5 @@ class CartViewModelTest {
         // Clean up observer to avoid memory leaks or unexpected test results
         cartViewModel.cartItems.removeObserver(cartItemsObserver)
     }
-
 
 }
