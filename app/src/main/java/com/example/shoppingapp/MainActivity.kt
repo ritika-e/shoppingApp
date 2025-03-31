@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.shoppingapp.presentation.admin.AddProductScreen
 import com.example.shoppingapp.presentation.admin.AdminDashboardScreen
 import com.example.shoppingapp.presentation.admin.CustomerDetailsScreen
 import com.example.shoppingapp.presentation.admin.CustomerListScreen
@@ -28,7 +29,6 @@ import com.example.shoppingapp.presentation.admin.UpdateProductScreen
 import com.example.shoppingapp.presentation.auth.LoginScreen
 import com.example.shoppingapp.presentation.auth.SignUpScreen
 import com.example.shoppingapp.presentation.auth.ForgotPasswordScreen
-import com.example.shoppingapp.ui.screen.AddProductScreen
 import com.example.shoppingapp.presentation.splash.SplashScreen
 import com.example.shoppingapp.presentation.user.CartScreen
 import com.example.shoppingapp.presentation.user.CategoryItemsScreen
@@ -156,7 +156,7 @@ class MainActivity : ComponentActivity() {
            
             }
         }
-    }
+
     @Deprecated("This method has been deprecated in favor of using the Activity Result API\n which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

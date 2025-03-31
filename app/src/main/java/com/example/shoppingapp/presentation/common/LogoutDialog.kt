@@ -23,12 +23,12 @@ fun LogoutDialog(
                 TextButton(onClick = {
                     onConfirm()  // Handle logout confirmation
                 }) {
-                    Text(context.getString(R.string.confirm_btn))
+                    Text(context.getString(R.string.confirm_txt))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(context.getString(R.string.cancel_btn))
+                    Text(context.getString(R.string.cancel_txt))
                 }
             }
         )

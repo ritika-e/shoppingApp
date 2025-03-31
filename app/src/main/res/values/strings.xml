@@ -34,7 +34,8 @@
     <string name="Reset_pass_txt">Reset password</string>
     <string name="Enter_email_txt">Enter your email</string>
     <string name="Reset_txt">We will send you a message to set or reset your new password.</string>
-    <string name="Reset_msg_txt">Password reset email sent</string>
+    <string name="Reset_msg_txt">We’ve sent you an email with the instructions to reset your password.
+        Please follow the link in the email.</string>
     <string name="Reset_fail_msg_txt">Failed to send password reset email</string>
     <string name="back_to_login_txt">Back to Login</string>
     <string name="Logged_out_txt">Logged out</string>
@@ -42,7 +43,7 @@
     <string name="Banner_txt">Banner</string>
     <string name="Back_txt">Back</string>
     <string name="cart_empty_txt">Your cart is empty</string>
-    <string name="Place_order_btn">Place Order</string>
+    <string name="Place_order_btn">Ready to Place Your Order?</string>
     <string name="Decrement_btn">Decrement</string>
     <string name="Increment_btn">Increment</string>
     <string name="Remove_btn">Remove</string>
@@ -84,9 +85,8 @@
     <string name="customer_no_order">No orders found for this customer.</string>
     <string name="show_details">Show Details</string>
     <string name="order_list">Admin Order List</string>
-    <string name="confirm_btn">Confirm</string>
-    <string name="cancel_btn">Cancel</string>
-    <string name="completed_btn">Complete</string>
+    <string name="confirm_txt">Confirm</string>
+    <string name="cancel_txt">Cancel</string>
     <string name="logout_txt">Are you sure you want to logout?</string>
     <string name="confirm_btn">Accept</string>
     <string name="cancel_btn">Reject</string>
@@ -114,5 +114,11 @@
     <string name="unknown_dates">Unknown Date</string>
     <string name="invalid_dates">Invalid Date</string>
     <string name="order_history">Order History</string>
+    <string name="order_txt">Are you sure you want to place the order?</string>
+    <string name="order_msg">You are about to finalize your purchase.</string>
+    <string name="confirm_order_btn">Confirm Order</string>
+    <string name="add_more_btn">Add More Items</string>
+    <string name="reset_dialog_title">Check Your Email!</string>
+    <string name="reset_dialog_title_fail">Password Reset Failed!</string>
 
 </resources>

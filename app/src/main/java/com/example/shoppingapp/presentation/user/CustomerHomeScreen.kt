@@ -232,7 +232,14 @@ fun CustomerDashboardScreen(
                 } else {
                     ListItems(items = recommended, navHostController = navHostController)
                 }
+
+                // Update showRecommendedLoading based on data availability
+                LaunchedEffect(recommended) {
+                    showRecommendedLoading = recommended.isEmpty()
+                }
             }
+
+
             item {
                 Spacer(modifier = Modifier.height(100.dp))
             }
@@ -429,7 +436,7 @@ fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
         horizontalArrangement = Arrangement.SpaceAround
     ){
         BottomMenuItem(icon = Icons.Default.Home,
-            text = context.getString(R.string.Home_txt), onItemClick = { onItemClick(" ") })
+            text = context.getString(R.string.Home_txt), onItemClick = { onItemClick("customer_dashboard") })
         BottomMenuItem(icon = Icons.Default.ShoppingCart,
             text = context.getString(R.string.Cart_txt), onItemClick = { onItemClick("cart") })
         BottomMenuItem(icon = Icons.Default.List,

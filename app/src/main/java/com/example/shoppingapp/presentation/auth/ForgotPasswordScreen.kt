@@ -51,6 +51,9 @@ fun ForgotPasswordScreen(
     val resetResult = viewModel.resetResult.observeAsState()
     var showDialog by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf("") }
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    var dialogTitle by remember { mutableStateOf("") }
+
 
     val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$".toRegex()
 
@@ -59,11 +62,13 @@ fun ForgotPasswordScreen(
         return when {
             email.isEmpty() -> {
                 emailError = context.getString(R.string.email_validation_txt)
+                dialogTitle = context.getString(R.string.Error_txt)
                 showDialog = true
                 false
             }
             !email.matches(emailRegex) -> {
                 emailError = context.getString(R.string.Invalid_email_txt)
+                dialogTitle = context.getString(R.string.Error_txt)
                 showDialog = true
                 false
             }
@@ -105,6 +110,9 @@ fun ForgotPasswordScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
             CommonButton(
                     text = context.getString(R.string.Reset_pass_txt),
                     onClick = {
@@ -112,17 +120,23 @@ fun ForgotPasswordScreen(
                             viewModel.resetPassword(email)
                         }
                     },
-                modifier = Modifier.fillMaxWidth())
+                modifier = Modifier.fillMaxWidth()
+            )}
 
-            resetResult.value?.let { success ->
-                LaunchedEffect(success) {
+
+                LaunchedEffect(resetResult.value) {
+                    resetResult.value?.let { success ->
                     if (success) {
                         emailError = context.getString(R.string.Reset_msg_txt)
-                        showDialog = false
+                        dialogTitle = context.getString(R.string.reset_dialog_title)
+                        email = ""
                     } else {
                         emailError = context.getString(R.string.Reset_fail_msg_txt)
-                        showDialog = false
+                        dialogTitle = context.getString(R.string.reset_dialog_title_fail)
+                        //showDialog = false
                     }
+
+                        showDialog = true
                 }
             }
 
@@ -142,7 +156,7 @@ fun ForgotPasswordScreen(
             CommonDialog(
                 showDialog = showDialog,
                 onDismiss = { showDialog = false },
-                title = context.getString(R.string.Error_txt),
+                title = dialogTitle,
                 message = emailError,
                 confirmButtonText = context.getString(R.string.Ok_txt),
                 onConfirm = { showDialog = false }

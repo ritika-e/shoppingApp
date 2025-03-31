@@ -45,7 +45,8 @@ class ProductRepositoryImpl(private val firebaseDatabase: FirebaseDatabase): Pro
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val products = snapshot.children
                         .mapNotNull { it.getValue(ItemsModel::class.java) }
-                    liveData.value = products
+                   // liveData.value = products
+                    liveData.postValue(products)
                 }
 
                 override fun onCancelled(error: DatabaseError) {

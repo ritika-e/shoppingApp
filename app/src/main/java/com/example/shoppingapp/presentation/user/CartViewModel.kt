@@ -23,6 +23,9 @@ class CartViewModel(private val cartUseCases: CartUseCases,
     private val _orderStatus = MutableLiveData<String>()
     val orderStatus: LiveData<String> get() = _orderStatus
 
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
     init {
          loadCartItems()
     }
@@ -70,6 +73,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
 
     // Place order function to call the use case
     fun placeOrder() {
+
         val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
         val cartItemsList = _cartItems.value ?: emptyList()
 
@@ -94,6 +98,7 @@ class CartViewModel(private val cartUseCases: CartUseCases,
 
         // Call the use case to place the order
         viewModelScope.launch {
+            _isLoading.value = true
             val result = placeOrderUseCase.execute(updatedCartItems, totalAmount, userId!!)
             if (result.isSuccess) {
                 _orderStatus.value = "Order placed successfully! Order ID: ${result.getOrNull()}"

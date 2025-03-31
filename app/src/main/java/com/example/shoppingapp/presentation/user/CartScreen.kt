@@ -2,21 +2,26 @@ package com.example.shoppingapp.presentation.user
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,12 +30,14 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -64,19 +72,13 @@ fun CartScreen(
     navController: NavHostController,
     cartViewModel: CartViewModel = koinViewModel()
 ) {
-    val context:Context = LocalContext.current
-    // Observe the cart items
+    val context: Context = LocalContext.current
     val cartItems by cartViewModel.cartItems.observeAsState(emptyList())
     val orderStatus by cartViewModel.orderStatus.observeAsState("")
     var showOrderDialog by remember { mutableStateOf(false) }
-    Log.e("CART ITEMS","--- $cartItems")
+    val isLoading = cartViewModel.isLoading.observeAsState(false)
 
-    if (cartItems != null && cartItems!!.isNotEmpty()) {
-        Log.e("Order", "Cart is NOT empty")
-    } else {
-        Log.e("Order", "Cart is empty")
-    }
-
+    var showDialog by remember { mutableStateOf(false) }
     var showInvoice by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -92,83 +94,115 @@ fun CartScreen(
             )
         },
         content = { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                if (cartItems!!.isEmpty()) {
-                    Text(
-                        text = context.getString(R.string.cart_empty_txt),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
-                    )
-                } else {
-                    LazyColumn {
-                        items(cartItems!!) { cartItem ->
+            // Use LazyColumn for the entire content
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                // Show empty cart message if no items in the cart
+                item {
+                    if (cartItems?.isEmpty() == true) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                        ){
+                        Text(
+                            text = context.getString(R.string.cart_empty_txt),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )}
+                    } else {
+                        // Display the cart items
+                        cartItems?.forEach { cartItem ->
                             CartItemView(cartItem, cartViewModel)
                         }
                     }
-                    // Show invoice button
-                    Button(
-                        onClick = {
-                            showInvoice = !showInvoice // Toggle invoice visibility
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Text(context.getString(R.string.Show_invoice_btn))
-                    }
+                }
 
-                    // If invoice is visible, show invoice details
-                    if (showInvoice) {
-                        InvoiceView(cartItems = cartItems!!)
+                // Show invoice button
+                if (cartItems?.isNotEmpty() == true) {
+                    item {
+                        Button(
+                            onClick = {
+                                showInvoice = !showInvoice // Toggle invoice visibility
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Text(context.getString(R.string.Show_invoice_btn))
+                        }
                     }
-
-                    // Place order button
-                    Button(
-                        onClick = {
-                            cartViewModel.placeOrder()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.LightGreen3 // Use any color you want
-                        )
-                    ) {
-                        Text(context.getString(R.string.Place_order_btn))
+                }
+                // Ensure LazyColumn is properly constrained in height
+                if (showInvoice && cartItems?.isNotEmpty() == true) {
+                    item {
+                        // Make sure the invoice is properly constrained with height or other limits
+                        Box(modifier = Modifier.heightIn(min = 200.dp, max = 600.dp).fillMaxWidth()) {
+                            cartItems?.let { InvoiceView(cartItems = it) }
+                        }
                     }
+                }
 
-                    // Show order status (success or failure message)
+                // Place order button
+                if (cartItems?.isNotEmpty() == true) {
+                    item {
+                        Button(
+                            onClick = {
+                                showDialog = true
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.LightGreen3
+                            )
+                        ) {
+                            if (isLoading.value) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            } else {
+                                Text(text = context.getString(R.string.Place_order_btn))
+                            }
+                        }
+                    }
+                }
+                // Show order status (success or failure message)
+                item {
                     if (orderStatus.isNotEmpty()) {
                         showOrderDialog = true
-                        /*Text(
-                            text = orderStatus,
-                            color = Color.Green,
-                            modifier = Modifier.padding(16.dp)
-                        )*/
                     }
+                }
 
+                // Continue Shopping Button
+                if (cartItems?.isNotEmpty() == true) {
+                    item {
                     Button(
                         onClick = {
-                            navController.navigate("customer_dashboard"){
+                            navController.navigate("customer_dashboard") {
                                 popUpTo("cart") { inclusive = true }
-                                launchSingleTop = true}
+                                launchSingleTop = true }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.OrangeYellow2 // Use any color you want
+                            containerColor = MaterialTheme.colorScheme.OrangeYellow2
                         )
-
                     ) {
                         Text(context.getString(R.string.shop_more_btn))
                     }
-
+                }
                 }
             }
         }
     )
+
     // Order confirmation dialog
     if (showOrderDialog) {
         AlertDialog(
@@ -183,11 +217,32 @@ fun CartScreen(
                         // Navigate to the dashboard screen after confirmation
                         navController.navigate("customer_dashboard") {
                             popUpTo("cart") { inclusive = true }
-                            launchSingleTop = true
-                        }
+                            launchSingleTop = true }
                     }
                 ) {
                     Text(context.getString(R.string.Ok_txt))
+                }
+            }
+        )
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = context.getString(R.string.order_txt)) },
+            text = { Text(text = context.getString(R.string.order_msg)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    // Place the order
+                    cartViewModel.placeOrder()
+                    showDialog = false
+                }) {
+                    Text(context.getString(R.string.confirm_order_btn))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(context.getString(R.string.add_more_btn))
                 }
             }
         )
@@ -213,7 +268,6 @@ fun CartItemView(
             .fillMaxWidth()
             .padding(16.dp)
             .background(Color.LightGray, RoundedCornerShape(8.dp)),
-        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         // Product Image
@@ -250,8 +304,11 @@ fun CartItemView(
                     cartViewModel.updateProductQuantity(cartItem.product.productId, quantity)
                 }
             }) {
-                Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription =
-                context.getString(R.string.Decrement_btn))
+                Image(
+                    painter = painterResource(id = R.drawable.minus_icon),
+                    contentDescription = context.getString(R.string.Decrement_btn),
+                    modifier = Modifier.size(24.dp) // Adjust size if needed
+                )
             }
 
             Text(
@@ -264,8 +321,11 @@ fun CartItemView(
                 quantity++
                 cartViewModel.updateProductQuantity(cartItem.product.productId, quantity)
             }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription =
-                context.getString(R.string.Increment_btn))
+                Image(
+                    painter = painterResource(id = R.drawable.add_circle),
+                    contentDescription = context.getString(R.string.Increment_btn),
+                    modifier = Modifier.size(24.dp) // Adjust size if needed
+                )
             }
         }
 
