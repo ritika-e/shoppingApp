@@ -139,7 +139,7 @@ dependencies {
 //    kapt 'com.github.bumptech.glide:compiler:4.15.1'
 
     // Robolectric for unit tests
-    testImplementation ("org.robolectric:robolectric:4.8.1")
+    testImplementation ("org.robolectric:robolectric:4.10.3")
 
 
 
