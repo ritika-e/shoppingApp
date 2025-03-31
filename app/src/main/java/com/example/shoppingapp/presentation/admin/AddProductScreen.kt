@@ -1,4 +1,4 @@
-package com.example.shoppingapp.ui.screen
+package com.example.shoppingapp.presentation.admin
 
 import android.net.Uri
 import android.widget.Toast
@@ -181,6 +181,13 @@ fun AddProductScreen( navController: NavHostController,
                         if (success) {
                             Toast.makeText(context, context.getString(R.string.product_succ_txt),
                                 Toast.LENGTH_SHORT).show()
+                            // Reset the fields to their initial state
+                            productName = ""
+                            productDescription = ""
+                            productPrice = ""
+                            selectedImageUri = null
+                            selectedCategory = null
+                            selectedCategoryId = null
                         } else {
                             Toast.makeText(context,context.getString(R.string.product_fail_txt),
                                 Toast.LENGTH_SHORT).show()

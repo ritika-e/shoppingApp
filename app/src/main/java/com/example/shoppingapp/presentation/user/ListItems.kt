@@ -97,6 +97,9 @@ fun ListItemsFullSize (items:List<ItemsModel>,
 fun RecommendedItem(items: List<ItemsModel>, pos:Int,
                     navHostController: NavHostController = rememberNavController()
 ){
+    val item = items.getOrNull(pos)
+    Log.d("RecommendedItem", "Item NAme ${item?.title} Image URL: ${item?.picUrl}")
+
     val context:Context = LocalContext.current
     Column(modifier = Modifier
         .padding(8.dp)

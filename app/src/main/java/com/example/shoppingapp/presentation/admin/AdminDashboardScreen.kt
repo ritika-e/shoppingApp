@@ -60,6 +60,7 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.data.ui.BottomMenuContent
 import com.example.shoppingapp.data.ui.Feature
 import com.example.shoppingapp.presentation.auth.LoginViewModel
+import com.example.shoppingapp.presentation.common.LogoutDialog
 import com.example.shoppingapp.ui.theme.Beige1
 import com.example.shoppingapp.ui.theme.Beige2
 import com.example.shoppingapp.ui.theme.Beige3
@@ -202,6 +203,8 @@ fun GreetingSection(
     val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     val userName = sharedPreferencesManager.getUserData().userName
     val logoutStatus = viewModel.logoutStatus.observeAsState().value
+    var showDialog by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(logoutStatus) {
         if (logoutStatus == context.getString(R.string.Logged_out_txt)) {
@@ -236,13 +239,25 @@ fun GreetingSection(
             modifier = Modifier
                 .size(24.dp)
                 .clickable {
-                    viewModel.logout()
+                    showDialog = true
+                   // viewModel.logout()
                     /*navHostController.navigate("login") {
                         popUpTo("admin_dashboard") { inclusive = true }
                     }*/
                 }
         )
     }
+
+    LogoutDialog(
+        showDialog = showDialog,
+        onConfirm = {
+            viewModel.logout()  // Handle the logout logic
+
+        },
+        onDismiss = {
+            showDialog = false // Close the dialog when 'No' is clicked
+        }
+    )
 }
 
 @Preview

@@ -123,11 +123,18 @@ fun OrderItemView(navHostController: NavHostController,
     }
 
     // Highlight order status (Accept, Delivered, Reject.)
-    val statusColor = when (order.status.lowercase()) {
+   /* val statusColor = when (order.status.lowercase()) {
         "Accept" -> Color.Blue
         "Delivered" -> Color.Green
         "Reject" -> Color.Red
         else -> Color.Gray
+    }*/
+
+    val statusColor = when (order.status) {
+        "Accept" -> Color(0xFFFF9800)  // Orange
+        "Reject" -> Color(0xFFE53935)  // Red
+        "Delivered" -> Color(0xFF388E3C)  // Green
+        else -> Color.Gray  // Default gray for pending or unknown status
     }
 
     Card(
