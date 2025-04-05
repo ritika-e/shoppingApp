@@ -106,7 +106,7 @@ class CustomerDashboardScreenTest {
         // Verify the loading indicator for banners is shown initially
         composeTestRule.onNodeWithTag("Loading banners").assertIsDisplayed()
 
-        // Optionally verify other indicators for categories and recommended items
+        //   verify other indicators for categories and recommended items
         composeTestRule.onNodeWithTag("Loading categories").assertIsDisplayed()
     }
 
@@ -122,7 +122,7 @@ class CustomerDashboardScreenTest {
         // Initialize the LiveData with the mock categories
         val liveDataCategories = MutableLiveData<List<CategoryModel>>()
 
-        // Use postValue to safely update the LiveData (important for background thread safety)
+        //   postValue to safely update the LiveData (important for background thread safety)
         liveDataCategories.postValue(categories)
 
         // Mock the ViewModel and properly mock the LiveData
@@ -230,9 +230,7 @@ class CustomerDashboardScreenTest {
         composeTestRule.onNodeWithTag("LogoutConfirmButton")
             .performClick()
 
-        // Verify the expected behavior (e.g., navigation or logout logic)
-        // For example, you can check if the screen navigates to the login page
-        composeTestRule.onNodeWithText("Login")  // Example of checking login screen
+          composeTestRule.onNodeWithText("Login")
             .assertIsDisplayed()
     }
 

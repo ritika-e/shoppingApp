@@ -71,7 +71,7 @@ class LoginScreenTest {
         // Initialize your mock ViewModel
         mockViewModel = mockk()
 
-        // Initialize your NavController (could be a mock or a real one if needed)
+        // Initializing NavController
         navController = mockk(relaxed = true)
 
         loginUseCase = mockk()
@@ -125,9 +125,6 @@ class LoginScreenTest {
 
         // Verify that the login function in the ViewModel was called
         coVerify { mockViewModel.login("validUser@example.com", "password123") }
-
-        // Optionally, verify the loading indicator appears
-       // composeTestRule.onNodeWithTag("loading_indicator").assertIsDisplayed()
     }
 
 //PASSED

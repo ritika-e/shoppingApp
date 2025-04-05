@@ -66,7 +66,7 @@ class ForgotPasswordScreenTest {
     //PASSED
     @Test
     fun testEmailInputFieldIsDisplayed() {
-        // Set the content for the test (No need to mock again, it's already done in setup)
+        // Set the content for the test
         composeTestRule.setContent {
             ForgotPasswordScreen(viewModel = mockViewModel)
         }
@@ -74,15 +74,15 @@ class ForgotPasswordScreenTest {
         // Ensure Compose has finished rendering
         composeTestRule.waitForIdle()
 
-        // Step 1: Ensure the email input field is displayed (checks for the placeholder text)
-        composeTestRule.onNodeWithText("Enter your email") // Use label or placeholder text
+        //Ensure the email input field is displayed
+        composeTestRule.onNodeWithText("Enter your email") // label or placeholder text
             .assertIsDisplayed()
 
-        // Step 2: Perform text input on the editable text field (EditableText node)
-        composeTestRule.onNodeWithTag("emailInputField") // Use the test tag directly for the editable field
+        // Perform text input on the editable text field
+        composeTestRule.onNodeWithTag("emailInputField") // Using the test tag directly for the editable field
             .performTextInput("test@example.com")
 
-        // Step 3: Assert that the entered text is correct in the EditableText node
+        //  Assert that the entered text is correct in the EditableText node
         composeTestRule.onNodeWithText("test@example.com") // Assert directly on the editable text
             .assertIsDisplayed() // Ensures the editable text is displayed correctly
     }
@@ -194,7 +194,7 @@ class ForgotPasswordScreenTest {
         every { mockViewModel.resetResult } returns mockResetResult
         every { mockViewModel.isLoading } returns MutableLiveData(false)
 
-        // Mock the resetPassword function to do nothing (side effect for test)
+        // Mock the resetPassword function to do nothing
         every { mockViewModel.resetPassword(any()) } just Runs
 
         composeTestRule.setContent {

@@ -136,7 +136,7 @@ class SignUpScreenTest {
         verify { mockViewModel.signUp(any(), any(), any(), any()) }
 
         // Verify that navigation happened after sign-up
-        val login: NavDirections = mockk()  // This should be the NavDirections you expect to navigate to
+        val login: NavDirections = mockk()
         verify { mockNavController.navigate(eq(login)) }
         Log.d("Test", "Verification passed for navigation")
 
@@ -160,9 +160,4 @@ class SignUpScreenTest {
         composeTestRule.onNodeWithText("Passwords does not match")
             .assertIsDisplayed()
             .assertTextContains("Passwords does not match")    }
-
-
-
-
-
 }
