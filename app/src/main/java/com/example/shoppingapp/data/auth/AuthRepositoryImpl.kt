@@ -83,7 +83,7 @@ open class AuthRepositoryImpl(private val fireBaseAuth: FirebaseAuth,
     }
 
 
-  open  override suspend fun login(email: String, password: String): Result<String> {
+     override suspend fun login(email: String, password: String): Result<String> {
 
         return try {
             // Sign in the user with email and password

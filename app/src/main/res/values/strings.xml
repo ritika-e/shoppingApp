@@ -28,14 +28,14 @@
     <!--<string name="Favorite_txt">Favorite</string>-->
     <string name="Orders_txt">Orders</string>
     <string name="Profile_txt">Profile</string>
+    <string name="logout_btn">Logout</string>
     <string name="support_txt">Support</string>
     <string name="email_validation_txt">Email cannot be empty</string>
     <string name="Invalid_email_txt">Invalid email format</string>
     <string name="Reset_pass_txt">Reset password</string>
     <string name="Enter_email_txt">Enter your email</string>
     <string name="Reset_txt">We will send you a message to set or reset your new password.</string>
-    <string name="Reset_msg_txt">We’ve sent you an email with the instructions to reset your password.
-        Please follow the link in the email.</string>
+    <string name="Reset_msg_txt">We’ve sent you an email with the instructions to reset your password.Please follow the link in the email.</string>
     <string name="Reset_fail_msg_txt">Failed to send password reset email</string>
     <string name="back_to_login_txt">Back to Login</string>
     <string name="Logged_out_txt">Logged out</string>
@@ -56,6 +56,10 @@
     <string name="product_desc_txt">Product Description</string>
     <string name="product_price_txt">Product Price (in $)</string>
     <string name="product_image_txt">Select Product Image</string>
+    <string name="choose_image_txt">Choose Image</string>
+    <string name="selected_image_txt">Selected Image</string>
+    <string name="product_image">Product Image</string>
+    <string name="product_title">Product Title</string>
     <string name="product_succ_txt">Product Added Successfully</string>
     <string name="product_fail_txt">Failed to Add Product</string>
     <string name="product_error_txt">Please fill all fields, all fields are mandatory</string>

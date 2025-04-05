@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommonTextField(
-    value : String,
+    value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
     label: String,
@@ -44,43 +44,40 @@ fun CommonTextField(
     bordeRadius: Dp = 8.dp,
     maxLength: Int = 100,
     isError: Boolean = false,
-){
+) {
     var text by remember { mutableStateOf(value) }
 
     TextField(
         value = text,
-        onValueChange ={
-            if(it.length <= maxLength){
+        onValueChange = {
+            if (it.length <= maxLength) {
                 text = it
                 onValueChange(it)
             }
         },
-        label = { Text(text = label)},
+        label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },
-
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
         isError = isError,
-        modifier = Modifier
+        modifier = modifier // Ensure the modifier is applied here
             .fillMaxWidth()
             .border(
                 width = borderWidth,
                 color = borderColor,
                 shape = RoundedCornerShape(bordeRadius)
-
             ),
         colors = TextFieldDefaults.textFieldColors(
             focusedTextColor = MaterialTheme.colorScheme.primary,
             unfocusedIndicatorColor = Color.Gray,
         ),
         singleLine = true
-
-        )
+    )
 }
 
 @Preview
 @Composable
-fun PreviewCommonInputBox(){
+fun PreviewCommonInputBox() {
     var text by remember { mutableStateOf("") }
-    CommonTextField(value = text, onValueChange = {text = it}, label = "label", placeholder = "Placeholder")
+    CommonTextField(value = text, onValueChange = { text = it }, label = "label", placeholder = "Placeholder")
 }

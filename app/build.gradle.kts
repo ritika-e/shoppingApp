@@ -100,6 +100,7 @@ dependencies {
 
     //Navigation
     implementation(libs.androidx.navigation.compose)
+
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -122,12 +123,13 @@ dependencies {
     testImplementation ("org.mockito:mockito-core:3.12.4")
     testImplementation ("io.mockk:mockk:1.13.2")
     androidTestImplementation ("io.mockk:mockk-android:1.12.0")  // For Android tests
+    testImplementation ("org.mockito:mockito-inline:3.11.2")
 
 
     androidTestImplementation ("org.mockito:mockito-android:3.12.4")
-    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")  // Use the latest version
+    testImplementation (libs.mockito.kotlin)  // Use the latest version
 
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2") // For coroutines testing
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0") // For coroutines testing
     testImplementation ("androidx.arch.core:core-testing:2.1.0")  // For LiveData testing
     testImplementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
 
@@ -141,7 +143,9 @@ dependencies {
     // Robolectric for unit tests
     testImplementation ("org.robolectric:robolectric:4.10.3")
 
-
+// Compose test rules
+    androidTestImplementation ("androidx.compose.ui:ui-test:1.0.5")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.0.5")
 
 
 }

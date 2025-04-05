@@ -26,7 +26,7 @@ import java.io.IOException
   validation errors or successful login states.
 
  */
-class LoginViewModel(
+open class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : ViewModel() {
@@ -37,7 +37,7 @@ class LoginViewModel(
     private val _loginStatus = MutableLiveData<Result<String>?>()
     val loginStatus: LiveData<Result<String>?> = _loginStatus
 
-    private val _isLoading = MutableLiveData<Boolean>()
+    val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
     private val _userRole = MutableLiveData<String?>()

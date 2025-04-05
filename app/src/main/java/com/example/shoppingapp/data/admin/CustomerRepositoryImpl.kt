@@ -35,7 +35,7 @@ class CustomerRepositoryImpl(private val firebaseFirestore: FirebaseFirestore): 
     override suspend fun getCustomerById(customerId: String): Customer? {
         return try {
             val documentSnapshot = firebaseFirestore.collection("users")
-                .whereEqualTo("customerId", customerId)
+                .whereEqualTo("userId", customerId)
                 .get()
                 .await()
 
