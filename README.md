@@ -52,13 +52,13 @@ The project follows a clean architecture approach, with a clear separation betwe
 #### 1. Clone the repository
 git clone  https://github.com/ritika-e/shoppingApp/tree/master
 cd shopping-app 
-### 2. Configure Firebase
+#### 2. Configure Firebase
 - Go to the Firebase Console and create a project.
 - Enable Firebase Authentication and Firestore in your Firebase project.
 - Download the google-services.json file from Firebase and place it in the app/ directory of the project.
-### 3. Add Firebase SDK to the project
+#### 3. Add Firebase SDK to the project
 - Make sure to follow the Firebase setup instructions in the project documentation to add the necessary dependencies in your build.gradle files.
-### 4. Run the App
+#### 4. Run the App
 - Open the project in Android Studio.
 - Build and run the app on your emulator or device.
   
