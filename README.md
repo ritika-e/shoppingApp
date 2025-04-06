@@ -27,7 +27,7 @@ This Android application allows users to sign up, log in, and manage a shopping 
     - Unit and UI tests have been written using JUnit, Espresso, and Mockito to ensure the functionality behaves as expected.
 
 ## Tech Stack
- ### - Language: ###  Kotlin
+  - Language:  Kotlin
   - UI: Jetpack Compose
   - Architecture: Clean Architecture with MVVM
   - Dependency Injection: koin
@@ -38,12 +38,9 @@ This Android application allows users to sign up, log in, and manage a shopping 
 ## Project Structure
 The project follows a clean architecture approach, with a clear separation between the data, domain, and presentation layers.
 
-# - Data layer:
-Contains data models, repository classes that fetch data from Firebase and Firestore
-# - Domain layer:
-Contains use cases and business logic.
-# - Presentation Layer: 
-Includes UI components and ViewModels that observe data using LiveData.
+ - Data layer: Contains data models, repository classes that fetch data from Firebase and Firestore
+ - Domain layer: Contains use cases and business logic.
+ - Presentation Layer: Includes UI components and ViewModels that observe data using LiveData.
 
 ## Setup & Installation
 
