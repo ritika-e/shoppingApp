@@ -22,7 +22,8 @@ fun CommonDialog(
     message: String,
     icon: @Composable (() -> Unit)? = null, // Optional icon
     confirmButtonText: String = "OK",
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     if (showDialog) {
         AlertDialog(
@@ -49,7 +50,8 @@ fun CommonDialog(
                 ) {
                     Text(text = confirmButtonText)
                 }
-            }
+            },
+            modifier = modifier
         )
     }
 }

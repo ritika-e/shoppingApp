@@ -36,6 +36,7 @@ import com.example.shoppingapp.presentation.common.CommonButton
 import com.example.shoppingapp.presentation.common.CommonTextField
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import com.example.shoppingapp.presentation.common.CommonDialog
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import org.koin.androidx.compose.koinViewModel
@@ -54,7 +55,7 @@ fun SignUpScreen(
     val sharedPreferencesManager: SharedPreferencesManager = getKoin().get()
     // Observe states from viewModel
     val isSignedUp by viewModel.isSignedUp.observeAsState(initial = false)
-    val isLoading by viewModel.isLoading.observeAsState(initial = false)
+    val isLoading by viewModel.isLoading.observeAsState(false)
     val errorMessage by viewModel.errorMessage.observeAsState()
 
     val signUpStatus by viewModel.signUpStatus.observeAsState()
@@ -192,26 +193,32 @@ fun SignUpScreen(
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
-            if (isLoading) {
-                CircularProgressIndicator() // Show loading spinner
-            } else {
-                Log.e("Sign UI 1","Button Press Log")
-            CommonButton(
-                text = context.getString(R.string.Signup_btn),
+                if (isLoading) {
+                  //  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .testTag("loading_indicator")
+                        )
+                  //  }
+                } else {
+                    Log.e("Sign UI 1", "Button Press Log")
+                    CommonButton(
+                        text = context.getString(R.string.Signup_btn),
 
-                onClick = {
-                    if (password == confirmPass) {
-                    viewModel.signUp(name,email,password,role)
-                }else{
-                        dialogMessage = context.getString(R.string.password_error)
-                        showDialog = true
+                        onClick = {
+                            if (password == confirmPass) {
+                                viewModel.signUp(name, email, password, role)
+                            } else {
+                                dialogMessage = context.getString(R.string.password_error)
+                                showDialog = true
+                            }
+
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Log.e("Sign UI 2", "Button Press Log")
                 }
 
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-                Log.e("Sign UI 2","Button Press Log")
-            }
             Spacer(modifier = Modifier.height(16.dp))
 
 
@@ -223,7 +230,8 @@ fun SignUpScreen(
                     title = context.getString(R.string.Error_txt),
                     message = dialogMessage ?: "",
                     confirmButtonText = context.getString(R.string.Ok_txt),
-                    onConfirm = {  showDialog = false }
+                    onConfirm = {  showDialog = false },
+                    modifier = Modifier.testTag("ErrorDialog")
                 )
             }
 

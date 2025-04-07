@@ -79,13 +79,25 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.java.KoinJavaComponent.getKoin
 
 @Composable
-fun AdminDashboardScreen(navHostController: NavHostController = rememberNavController()) {
+fun AdminDashboardScreen(navHostController: NavHostController = rememberNavController(),
+                         viewModel: AdminDashboardViewModel = koinViewModel()) {
     val context: Context = LocalContext.current
+    val totalOrders by viewModel.totalOrders.observeAsState(0)
+     val pendingOrders by viewModel.totalPendingOrders.observeAsState(0)
+    val deliverdOrders by viewModel.totalDeliverdOrders.observeAsState(0)
+    val acceptedOrders by viewModel.totalAcceptedOrders.observeAsState(0)
+    val rejectedOrders by viewModel.totalRejectedOrders.observeAsState(0)
+
+
     Box(modifier = Modifier
         .fillMaxSize()){
         Column {
             GreetingSection(navHostController)
-            ChipSection(chips = listOf("Total Order","New Orders","Pending Orders"))
+            ChipSection(chips = listOf(context.getString(R.string.total_Orders)+ ": $totalOrders",
+                context.getString(R.string.delivered_Orders) +": $deliverdOrders",
+                context.getString(R.string.pending_Orders)+": $pendingOrders",
+                context.getString(R.string.accepted_Orders)+": $acceptedOrders",
+               context.getString(R.string.rejected_Orders)+ ": $rejectedOrders"))
             FeaturesSection(features = listOf(
                 Feature(
                     title = context.getString(R.string.cust_txt),
@@ -116,82 +128,10 @@ fun AdminDashboardScreen(navHostController: NavHostController = rememberNavContr
                 navHostController = navHostController
                 )
         }
-            /*BottomMenu(items = listOf(
-                BottomMenuContent("Home",Icons.Default.Home),
-                BottomMenuContent("settings",Icons.Default.Settings),
-                BottomMenuContent("Profile",Icons.Default.AccountCircle),
-                BottomMenuContent("Help",Icons.Default.Info),
 
-            ), modifier = Modifier.align(Alignment.BottomCenter))*/
     }
  }
 
-@Composable
-fun BottomMenu(
-    items: List<BottomMenuContent>,
-    modifier: Modifier = Modifier,
-    activeHighlightColor : Color = Color.Blue,
-    activeTextColor: Color = Color.White,
-    inactiveTextColor :Color = Color.Gray,
-    initialSelectedItemIndex: Int = 0
-){
-        var selectedItemIndex by remember {
-            mutableStateOf(initialSelectedItemIndex)
-        }
-    Row (
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.LightGray)
-            .padding(15.dp)
-    ){
-        items.forEachIndexed{ index, item ->
-            BottomMenuItem(item = item,
-                isSelected = index == selectedItemIndex,
-                activeHighlightColor = activeHighlightColor,
-                activeTextColor = activeTextColor,
-                inactiveTextColor = inactiveTextColor
-            ) {
-                selectedItemIndex = index
-            }
-        }
-    }
-}
-
-@Composable
-fun BottomMenuItem(
-    item: BottomMenuContent,
-    isSelected:Boolean = false,
-    activeHighlightColor : Color = Color.Blue,
-    activeTextColor: Color = Color.White,
-    inactiveTextColor :Color = Color.Cyan,
-    onItemClick:() -> Unit
-){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.clickable {
-            onItemClick()
-        }
-    ) {
-            Box (
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(if (isSelected) activeHighlightColor else Color.Transparent)
-                    .padding(10.dp)
-            ){
-                Icon(imageVector = item.icon,
-                    contentDescription = item.title,
-                    tint = if (isSelected) activeTextColor else inactiveTextColor,
-                    modifier = Modifier.size(20.dp)
-                    )
-            }
-        Text(text = item.title,
-            color = if (isSelected) activeTextColor else inactiveTextColor)
-    }
-}
 
 @Composable
 fun GreetingSection(
@@ -270,9 +210,7 @@ fun DashboardScreenPrev(){
 fun ChipSection(
     chips: List<String>
 ){
-    var selectedChipIndex by remember {
-        mutableStateOf(0)
-    }
+    var selectedChipIndex by remember { mutableStateOf(0) }
     LazyRow {
         items (chips.size){
             Box(
@@ -289,7 +227,7 @@ fun ChipSection(
                     )
                     .padding(15.dp)
             ){
-                Text(text = chips[it], color = Color.White)
+                Text(text = chips[it], color = Color.White, fontWeight = FontWeight.Medium)
             }
         }
     }
@@ -297,9 +235,10 @@ fun ChipSection(
 
 @Composable
 fun FeaturesSection(features: List<Feature>,navHostController: NavHostController){
+    var context:Context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Features",
+            text = context.getString(R.string.features),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(15.dp)
         )
@@ -349,6 +288,7 @@ fun FeatureItem(
              lineTo(-100f, height.toFloat() + 100f)
             close()
          }
+        var context:Context = LocalContext.current
 
         //Light Colored
         val lightPoint1 = Offset(0f,height * 0.35f)
@@ -396,7 +336,7 @@ fun FeatureItem(
                 .align(Alignment.BottomStart)
                 .padding(start = 10.dp, bottom = 10.dp))
 
-        Text(text = "Start",
+        Text(text = context.getString(R.string.click_to_open),
             color = Color.White,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,

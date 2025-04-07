@@ -10,7 +10,7 @@ import kotlinx.coroutines.tasks.await
 class CustomerRepositoryImpl(private val firebaseFirestore: FirebaseFirestore): CustomerRepository {
 
     // Get all customers
-    override suspend fun getAllCustomers(): Result<List<Customer>> {
+   /* override suspend fun getAllCustomers(): Result<List<Customer>> {
         return try {
             val querySnapshot = firebaseFirestore.collection("users").get().await()
               val customers = querySnapshot.documents.mapNotNull { doc ->
@@ -28,14 +28,42 @@ class CustomerRepositoryImpl(private val firebaseFirestore: FirebaseFirestore): 
             Log.e("CustomerRepository", "Error fetching customers from Firestore: ${e.message}")
             Result.failure(e) // Return failure in case of an error
         }
+    }*/
+    override suspend fun getAllCustomers(): Result<List<Customer>> {
+        return try {
+            // Modify the query to filter by role as "customer"
+            val querySnapshot = firebaseFirestore.collection("users")
+                .whereEqualTo("role", "customer") // Only fetch customers with role "customer"
+                .get()
+                .await()
+
+            // Deserialize documents into Customer objects
+            val customers = querySnapshot.documents.mapNotNull { doc ->
+                try {
+                    doc.toObject(Customer::class.java)?.also {
+                        Log.d("CustomerRepository", "Deserialized customer: ${it.name}, ${it.email}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("CustomerRepository", "Error deserializing customer: ${e.message}")
+                    null
+                }
+            }
+
+            // Return the list of customers as a success result
+            Result.success(customers)
+        } catch (e: Exception) {
+            Log.e("CustomerRepository", "Error fetching customers from Firestore: ${e.message}")
+            Result.failure(e) // Return failure in case of an error
+        }
     }
+
 
 
     // Get customer by ID
     override suspend fun getCustomerById(customerId: String): Customer? {
         return try {
             val documentSnapshot = firebaseFirestore.collection("users")
-                .whereEqualTo("customerId", customerId)
+                .whereEqualTo("userId", customerId)
                 .get()
                 .await()
 

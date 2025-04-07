@@ -9,8 +9,3 @@ open class SignUpUseCase(private val userRepository: AuthRepository) {
         return userRepository.signUp(name, email, password, role)
     }
 }
-
-/*
-class LoginUseCase(private val userRepository: AuthRepository) {
-    suspend operator fun invoke(email: String, password: String) = userRepository.login(email, password)
-}*/

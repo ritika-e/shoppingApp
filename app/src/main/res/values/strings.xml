@@ -28,14 +28,14 @@
     <!--<string name="Favorite_txt">Favorite</string>-->
     <string name="Orders_txt">Orders</string>
     <string name="Profile_txt">Profile</string>
+    <string name="logout_btn">Logout</string>
     <string name="support_txt">Support</string>
     <string name="email_validation_txt">Email cannot be empty</string>
     <string name="Invalid_email_txt">Invalid email format</string>
     <string name="Reset_pass_txt">Reset password</string>
     <string name="Enter_email_txt">Enter your email</string>
     <string name="Reset_txt">We will send you a message to set or reset your new password.</string>
-    <string name="Reset_msg_txt">We’ve sent you an email with the instructions to reset your password.
-        Please follow the link in the email.</string>
+    <string name="Reset_msg_txt">We’ve sent you an email with the instructions to reset your password.Please follow the link in the email.</string>
     <string name="Reset_fail_msg_txt">Failed to send password reset email</string>
     <string name="back_to_login_txt">Back to Login</string>
     <string name="Logged_out_txt">Logged out</string>
@@ -54,8 +54,13 @@
     <string name="add_product_txt">Add Product</string>
     <string name="product_name_txt">Product Name</string>
     <string name="product_desc_txt">Product Description</string>
+    <string name="product_id">Product Id</string>
     <string name="product_price_txt">Product Price (in $)</string>
     <string name="product_image_txt">Select Product Image</string>
+    <string name="choose_image_txt">Choose Image</string>
+    <string name="selected_image_txt">Selected Image</string>
+    <string name="product_image">Product Image</string>
+    <string name="product_title">Product Title</string>
     <string name="product_succ_txt">Product Added Successfully</string>
     <string name="product_fail_txt">Failed to Add Product</string>
     <string name="product_error_txt">Please fill all fields, all fields are mandatory</string>
@@ -74,10 +79,15 @@
     <string name="no_order">No order found.</string>
     <string name="unknown_error">Unknown error</string>
     <string name="order_id">Order ID: %1$s</string>
+    <string name="orderid">Order ID:</string>
     <string name="status">Status: %1$s</string>
+    <string name="statusTxt">Status:</string>
     <string name="total_amt">Total Amount: $%1$.2f</string>
-    <string name="total">Total: $%1$.2f</string>
-    <string name="order_date">Order Date: $%1$</string>
+    <string name="totalamt">Total Amount: </string>
+   <!-- <string name="total">Total: $%1$.2f</string>
+    <string name="order_date">Order Date: $%1$</string> -->
+    <string name="total">Total:</string>
+    <string name="order_date">Order Date:</string>
     <string name="items">Items:</string>
     <string name="invoice">Invoice</string>
     <string name="customer_list">Customer List</string>
@@ -120,5 +130,18 @@
     <string name="add_more_btn">Add More Items</string>
     <string name="reset_dialog_title">Check Your Email!</string>
     <string name="reset_dialog_title_fail">Password Reset Failed!</string>
+    <string name="update_Profile">Update Profile</string>
+    <string name="address">Address</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="role">Role</string>
+    <string name="profile_update_successfully">Profile updated successfully</string>
+    <string name="profile_update_failed">Failed to update profile</string>
+    <string name="click_to_open">Click to Open</string>
+    <string name="features">Features</string>
+    <string name="total_Orders">Total Orders</string>
+    <string name="delivered_Orders">Delivered Orders</string>
+    <string name="pending_Orders">Pending Orders</string>
+    <string name="accepted_Orders">Accepted Orders</string>
+    <string name="rejected_Orders">Rejected Orders</string>
 
 </resources>

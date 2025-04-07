@@ -3,6 +3,7 @@ package com.example.shoppingapp.di
 
 import com.example.shoppingapp.data.admin.ProductManagementRepositoryImpl
 import com.example.shoppingapp.data.admin.CustomerRepositoryImpl
+import com.example.shoppingapp.data.admin.OrderCountRepositoryImpl
 import com.example.shoppingapp.data.auth.AuthService
 import com.example.shoppingapp.data.auth.AuthRepositoryImpl
 import com.example.shoppingapp.data.product.CartRepositoryImpl
@@ -15,15 +16,19 @@ import com.example.shoppingapp.domain.repositories.AuthRepository
 import com.example.shoppingapp.domain.repositories.CartDataSourceRepository
 import com.example.shoppingapp.domain.repositories.CartRepository
 import com.example.shoppingapp.data.product.OrderRepositoryImpl
+import com.example.shoppingapp.data.user.UserRepositoryImpl
 import com.example.shoppingapp.domain.repositories.CustomerRepository
 import com.example.shoppingapp.domain.repositories.FirebaseProductRepository
+import com.example.shoppingapp.domain.repositories.OrderCountRepository
 import com.example.shoppingapp.domain.repositories.OrderHistoryRepository
 import com.example.shoppingapp.domain.repositories.OrderRepository
 import com.example.shoppingapp.domain.repositories.ProductManagementRespository
+import com.example.shoppingapp.domain.repositories.UserRepository
 import com.example.shoppingapp.domain.usecase.GetCurrentUserIdUseCase
 import com.example.shoppingapp.domain.usecase.LoginUseCase
 import com.example.shoppingapp.domain.usecase.ResetPasswordUseCase
 import com.example.shoppingapp.domain.usecase.SignUpUseCase
+import com.example.shoppingapp.domain.usecase.UpdateUserProfileUseCase
 import com.example.shoppingapp.domain.usecase.UserUseCase
 import com.example.shoppingapp.domain.usecase.admin.AddProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.DeleteCustomerUseCase
@@ -34,6 +39,11 @@ import com.example.shoppingapp.domain.usecase.admin.GetProductByIdUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetCustomerByIdUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetCustomerOrdersUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetCustomersUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetTotalAcceptedOrdersUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetTotalDeliverdOrdersUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetTotalOrdersUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetTotalPendingOrdersUseCase
+import com.example.shoppingapp.domain.usecase.admin.GetTotalRejectedOrdersUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateOrderStatusUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.AddProductToCartUseCase
@@ -50,6 +60,7 @@ import com.example.shoppingapp.domain.usecase.productUseCases.GetRecommendedProd
 import com.example.shoppingapp.domain.usecase.productUseCases.PlaceOrderUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.RemoveProductFromCartUseCase
 import com.example.shoppingapp.domain.usecase.productUseCases.UpdateProductQuantityUseCase
+import com.example.shoppingapp.presentation.admin.AdminDashboardViewModel
 import com.example.shoppingapp.presentation.admin.CustomerViewModel
 import com.example.shoppingapp.presentation.admin.AdminOrderViewModel
 import com.example.shoppingapp.presentation.admin.ProductViewModel
@@ -60,6 +71,7 @@ import com.example.shoppingapp.presentation.splash.SplashViewModel
 import com.example.shoppingapp.presentation.user.CartViewModel
 import com.example.shoppingapp.presentation.user.OrderHistoryViewModel
 import com.example.shoppingapp.presentation.user.ProductDetailsViewModel
+import com.example.shoppingapp.presentation.user.UserViewModel
 import com.example.shoppingapp.utils.SharedPreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -99,7 +111,8 @@ val appModule = module{
     single <CustomerRepository>{ CustomerRepositoryImpl(get()) }
     single <OrderRepository>{ com.example.shoppingapp.data.admin.OrderRepositoryImpl(get()) }
     single <ProductManagementRespository>{ ProductManagementRepositoryImpl(get(),get()) }
-
+    single <UserRepository>{ UserRepositoryImpl(get()) }
+    single <OrderCountRepository>{ OrderCountRepositoryImpl()  }
 
 
     // UseCases
@@ -137,7 +150,12 @@ val appModule = module{
     single { UpdateOrderStatusUseCase(get()) }
     single { GetProductByIdUseCase(get()) }
     single { ClearCartUseCase(get()) }
-
+    single { UpdateUserProfileUseCase(get()) }
+    single { GetTotalPendingOrdersUseCase(get()) }
+    single { GetTotalAcceptedOrdersUseCase(get()) }
+    single { GetTotalDeliverdOrdersUseCase(get()) }
+    single { GetTotalOrdersUseCase(get()) }
+    single { GetTotalRejectedOrdersUseCase(get()) }
     // viewModel
     viewModel { SplashViewModel() }
     viewModel { LoginViewModel(get(),get()) }
@@ -149,4 +167,6 @@ val appModule = module{
     viewModel { OrderHistoryViewModel(get(),get()) }
     viewModel { AdminOrderViewModel(get(),get()) }
     viewModel { CustomerViewModel(get(),get(),get(),get()) }
+    viewModel { UserViewModel(get()) }
+    viewModel { AdminDashboardViewModel(get(),get(),get(),get(),get()) }
 }

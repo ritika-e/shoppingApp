@@ -22,19 +22,18 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.launch
 
 
-class ProductDetailsViewModel(
+open class ProductDetailsViewModel(
     private val getProductDetailsUseCase: GetProductDetailsUseCase,
     private val getRecommendedProductsUseCase: GetRecommendedProductsUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getCategoryItemUseCase: GetCategoryItemUseCase,
-    private val getBannersUseCase: GetBannersUseCase
+    val getBannersUseCase: GetBannersUseCase
 ) : ViewModel() {
 
     private val _category = MutableLiveData<List<CategoryModel>>()
-    val categories: LiveData<List<CategoryModel>> = _category
+    open val categories: LiveData<List<CategoryModel>> = _category
 
-    private val _banner =
-        MutableLiveData<List<SliderModel>>(emptyList()) // Initialize with an empty list
+    val _banner = MutableLiveData<List<SliderModel>>(emptyList()) // Initialize with an empty list
     val banners: LiveData<List<SliderModel>> = _banner
 
     private val _recommended = MutableLiveData<List<ItemsModel>>()
@@ -49,7 +48,6 @@ class ProductDetailsViewModel(
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
-
 
 
     fun loadProductDetails(productId: Int) {

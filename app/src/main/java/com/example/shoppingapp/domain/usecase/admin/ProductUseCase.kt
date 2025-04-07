@@ -13,7 +13,6 @@ import kotlinx.coroutines.withContext
 class ProductUseCase {
 }
 
-
 open class AddProductUseCase(private val productRepository: FirebaseProductRepository) {
 
     open suspend fun execute(
@@ -26,14 +25,14 @@ open class AddProductUseCase(private val productRepository: FirebaseProductRepos
             product.picUrl?.let { uriString ->
                 val uri = Uri.parse(uriString)  // Convert the string to a Uri
 
-                // Step 1: Upload the image to Firebase Storage and get the download URL
+                // Upload the image to Firebase Storage and get the download URL
                 productRepository.uploadImageToStorage(uri, product.productId, onProgress) { imageUrl ->
                     if (imageUrl != null) {
 
-                        // Step 2: Update the product with the image URL
+                        //  Update the product with the image URL
                         val updatedProduct = product.copy(picUrl = imageUrl)
 
-                        // Step 3: Save the product data (including image URL) to the database
+                        //  Save the product data (including image URL) to the database
                         GlobalScope.launch(Dispatchers.IO) { // Launch coroutine in background thread
                             val isProductSaved = saveProduct(updatedProduct)
                             withContext(Dispatchers.Main) {

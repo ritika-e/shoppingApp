@@ -62,22 +62,6 @@ class CustomerViewModel(
         }
     }
 
-    // Get orders by customer ID
-    /*fun getOrdersByCustomer(customerId: String) {
-        Log.e("customerId in VM getORders : "," $customerId")
-
-        _isLoading.value = true
-       Log.d("ViewModel", "Loading started")
-        viewModelScope.launch {
-            val result = getCustomerOrdersUseCase.execute(customerId)
-            if (result.isSuccess) {
-                _orders.value = result.getOrNull() ?: emptyList()
-            }
-            _isLoading.value = false
-            Log.d("ViewModel", "Loading finished")
-        }
-    }*/
-
     fun getOrdersByCustomer(customerId: String) {
         viewModelScope.launch {
             try {
@@ -92,16 +76,4 @@ class CustomerViewModel(
             }
         }
     }
-
-
-    // Delete customer by ID
-   /* fun deleteCustomer(customerId: String) {
-        viewModelScope.launch {
-            val result = deleteCustomerUseCase.execute(customerId)
-            if (result.isSuccess) {
-                // Refresh the customer list after deleting
-                getCustomersUseCase.execute()
-            }
-        }
-    }*/
 }

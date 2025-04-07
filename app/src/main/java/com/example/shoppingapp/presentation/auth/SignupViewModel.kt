@@ -26,7 +26,10 @@ open class SignupViewModel(private val signUpUseCase: SignUpUseCase,
 
     // Validation error messages
     var errorMessage = MutableLiveData <String?>("")
-    private var _isLoading = MutableLiveData(false)
+   /* var _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> get() = _isLoading*/
+
+    val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
 

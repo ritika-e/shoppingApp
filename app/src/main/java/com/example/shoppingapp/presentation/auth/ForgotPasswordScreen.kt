@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -80,6 +81,23 @@ fun ForgotPasswordScreen(
         }
     }
 
+    LaunchedEffect(resetResult.value) {
+        resetResult.value?.let { success ->
+            if (success) {
+                emailError = context.getString(R.string.Reset_msg_txt)
+                dialogTitle = context.getString(R.string.reset_dialog_title)
+                email = ""
+            } else {
+                emailError = context.getString(R.string.Reset_fail_msg_txt)
+                dialogTitle = context.getString(R.string.reset_dialog_title_fail)
+                //showDialog = false
+            }
+
+            showDialog = true
+            Log.d("ForgotPasswordTest", "showDialog set to: $showDialog")
+
+        }
+    }
     Surface(modifier = Modifier.fillMaxSize()) {
         Box (
             modifier = Modifier.fillMaxSize()
@@ -100,7 +118,8 @@ fun ForgotPasswordScreen(
                 value = email,
                 onValueChange = {email = it},
                 placeholder = context.getString(R.string.Enter_email_txt),
-                label = context.getString(R.string.Enter_email_txt))
+                label = context.getString(R.string.Enter_email_txt),
+                modifier = Modifier.testTag("emailInputField") )
             
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -124,21 +143,7 @@ fun ForgotPasswordScreen(
             )}
 
 
-                LaunchedEffect(resetResult.value) {
-                    resetResult.value?.let { success ->
-                    if (success) {
-                        emailError = context.getString(R.string.Reset_msg_txt)
-                        dialogTitle = context.getString(R.string.reset_dialog_title)
-                        email = ""
-                    } else {
-                        emailError = context.getString(R.string.Reset_fail_msg_txt)
-                        dialogTitle = context.getString(R.string.reset_dialog_title_fail)
-                        //showDialog = false
-                    }
 
-                        showDialog = true
-                }
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -159,7 +164,8 @@ fun ForgotPasswordScreen(
                 title = dialogTitle,
                 message = emailError,
                 confirmButtonText = context.getString(R.string.Ok_txt),
-                onConfirm = { showDialog = false }
+                onConfirm = { showDialog = false},
+                modifier = Modifier.testTag("resetPasswordDialog")
             )
         }
 

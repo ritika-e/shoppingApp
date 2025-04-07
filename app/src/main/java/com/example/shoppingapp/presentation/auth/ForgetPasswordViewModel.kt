@@ -8,9 +8,9 @@ import com.example.shoppingapp.data.auth.AuthService
 import com.example.shoppingapp.domain.usecase.ResetPasswordUseCase
 import kotlinx.coroutines.launch
 
-class ForgetPasswordViewModel(private val resetPasswordUseCase: ResetPasswordUseCase):ViewModel() {
+open class ForgetPasswordViewModel( private val resetPasswordUseCase: ResetPasswordUseCase):ViewModel() {
 
-    private val _resetResult = MutableLiveData<Boolean?>()
+      val _resetResult = MutableLiveData<Boolean?>()
     val resetResult: LiveData<Boolean?> get() = _resetResult
 
     private val _error = MutableLiveData<String?>()
@@ -20,7 +20,7 @@ class ForgetPasswordViewModel(private val resetPasswordUseCase: ResetPasswordUse
     val isLoading: LiveData<Boolean> get() = _isLoading
 
     // Handle the password reset request
-    fun resetPassword(email: String) {
+  open  fun resetPassword(email: String) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -29,7 +29,7 @@ class ForgetPasswordViewModel(private val resetPasswordUseCase: ResetPasswordUse
                 _isLoading.value = false
             } catch (e: Exception) {
                 _error.postValue("Error occurred: ${e.message}")
-                _isLoading.value = false
+                _isLoading.postValue(false)
                // _resetResult.postValue(false) // Indicate failure
             }
         }

@@ -54,7 +54,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -167,11 +170,12 @@ fun CustomerDashboardScreen(
 
                         Text(
                             text = "$userName!", color = Color.Black,
-                            fontSize = 18.sp, fontWeight = FontWeight.Bold
+                            fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                            modifier = Modifier.testTag("WelcomeText")
                         )
                     }
                     Icon(imageVector = Icons.Sharp.ExitToApp,
-                        contentDescription = context.getString(R.string.Profile_txt),
+                        contentDescription = context.getString(R.string.logout_btn),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(24.dp)
@@ -179,6 +183,7 @@ fun CustomerDashboardScreen(
                                 showDialog = true
 
                             }
+                            .testTag("LogoutIcon")  // Add the testTag
                     )
                 }
             }
@@ -191,10 +196,11 @@ fun CustomerDashboardScreen(
                             .height(200.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            modifier = Modifier.testTag("Loading banners"))
                     }
                 } else {
-                    Log.d("CustomerDashboardScreen", "Displaying banners: $banners")
+                   // Log.d("CustomerDashboardScreen", "Displaying banners: $banners")
                     Banners(banners)
                 }
             }
@@ -209,7 +215,7 @@ fun CustomerDashboardScreen(
                             .height(50.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(modifier = Modifier.testTag("Loading categories"))
                     }
                 } else {
                     CategoryList(navHostController= navHostController,categories)
@@ -273,6 +279,12 @@ fun CategoryList(
     categories: SnapshotStateList<CategoryModel>
 
 ){
+
+    // Log the category titles
+    categories.forEach {
+        Log.d("CategoryList", "Category title: ${it.title}")
+    }
+
     var selectedIndex by remember { mutableStateOf(-1) }
 
     LazyRow(modifier = Modifier
@@ -288,19 +300,33 @@ fun CategoryList(
                         selectedIndex=index
                        navHostController.navigate(
                          "category_items/${categories[index].id}/${categories[index].title}")
-                    })
+                    },
+                )
             }
     }
 }
 
 @Composable
 fun CategoryItem(item:CategoryModel,isSelected:Boolean,onItemClick:()->Unit){
+    val categoryName = "CategoryName"
+    val testTag = "CategoryItem_${categoryName.replace(" ", "_")}"
+   // val testTag = "CategoryItem_${item.title.replace(" ", "_")}"
+    Log.d("CategoryItemTest", "Created test tag: $testTag")
     Row (modifier = Modifier
         .clickable(onClick = onItemClick)
         .background(
             color = if (isSelected) colorResource(id = R.color.purple_500) else Color.Transparent,
             shape = RoundedCornerShape(8.dp)
-        ),
+        )
+       /* .semantics {
+            if (isSelected) {
+                this.contentDescription = "Selected"
+            } else {
+                this.contentDescription = "Not Selected"
+            }
+        }*/
+        .testTag("CategoryItem_${item.title.replace(" ", "_")}")
+        ,
         verticalAlignment = Alignment.CenterVertically
     ){
         AsyncImage(model = (item.picUrl), contentDescription = item.title,
@@ -443,6 +469,8 @@ fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
             text = context.getString(R.string.Orders_txt), onItemClick = { onItemClick("order_history") })
         BottomMenuItem(icon = Icons.Default.Phone,
             text = context.getString(R.string.support_txt), onItemClick = { onItemClick("supportScreen") })
+        BottomMenuItem(icon = Icons.Default.Person,
+            text = context.getString(R.string.Profile_txt), onItemClick = { onItemClick("userProfile") })
     }
 }
 

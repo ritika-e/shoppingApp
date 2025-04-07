@@ -1,8 +1,6 @@
 package com.example.shoppingapp.domain.usecase
 
 import android.util.Log
-import com.example.shoppingapp.data.user.UserRepository
-import com.example.shoppingapp.domain.model.User
 import com.example.shoppingapp.domain.repositories.AuthRepository
 
 class UserUseCase(private val authRepository: AuthRepository) {

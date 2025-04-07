@@ -43,9 +43,17 @@ fun ProductListScreen(navController: NavHostController, productViewModel: Produc
     val isLoading by productViewModel.isLoading.observeAsState(false)
 
     val context:Context = LocalContext.current
-    LaunchedEffect(Unit) {
-        productViewModel.getProducts()
+
+    LaunchedEffect(key1 = Unit) {
+        productViewModel.getProducts()  // Re-fetch products every time screen is loaded
     }
+    LaunchedEffect(key1 = products) {
+        if (products.isEmpty() && !isLoading) {
+            productViewModel.getProducts() // Fetch products again if the list is empty or no products found
+        }
+    }
+
+
 
     Scaffold(
         topBar = {
@@ -89,9 +97,12 @@ fun ProductItemView(product: ProductList, navController: NavHostController) {
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Product Id: ${product.productId}", style = MaterialTheme.typography.headlineSmall)
-            Text("Name: ${product.title}", style = MaterialTheme.typography.headlineSmall)
-            Text("Price: $${product.price}", style = MaterialTheme.typography.bodyLarge)
+            Text(context.getString(R.string.product_id)+": ${product.productId}",
+                style = MaterialTheme.typography.labelLarge)
+            Text(context.getString(R.string.product_name_txt)+": ${product.title}",
+                style = MaterialTheme.typography.labelLarge)
+            Text(context.getString(R.string.product_price_txt)+" $${product.price}",
+                style = MaterialTheme.typography.bodyLarge)
             Button(onClick = { navController.navigate("productScreen/${product.productId}") }) {
                 Text(context.getString(R.string.view_details))
             }

@@ -90,7 +90,8 @@ fun OrderDetailView(order: Order) {
         Text(text = context.getString(R.string.total_amt, order.totalAmount),
             style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Order Date: ${order.orderDate}", style = MaterialTheme.typography.bodyMedium)
+        Text(text = context.getString(R.string.order_date)+" ${order.orderDate}",
+            style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = context.getString(R.string.items), style = MaterialTheme.typography.bodyMedium)
@@ -98,7 +99,7 @@ fun OrderDetailView(order: Order) {
         order.cartItems.forEach { cartItem ->
             Text(text = " - ${cartItem.product.title} x ${cartItem.quantity}",
                 style = MaterialTheme.typography.bodyMedium)
-            Text(text = "   Total: $${cartItem.productTotal}",
+            Text(text = context.getString(R.string.total) +" $${cartItem.productTotal}",
                 style = MaterialTheme.typography.bodyMedium)
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,10 +23,13 @@ fun CommonButton(
     shape: androidx.compose.ui.graphics.Shape = MaterialTheme.shapes.medium,
     padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
     fontSize:Float = 16f,
+    testTag: String? = null
 ){
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.then(
+            if (testTag != null) Modifier.testTag(testTag) else Modifier // Apply testTag if provided
+        ),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor

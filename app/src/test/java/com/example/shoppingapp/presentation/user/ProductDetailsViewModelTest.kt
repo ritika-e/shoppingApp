@@ -86,7 +86,7 @@ class ProductDetailsViewModelTest {
         val productId = 1
         val errorMessage = "Product not found"
 
-        // Mock the use case to return null (simulating failure)
+        // Mock the use case to return null
         val liveDataMock: LiveData<ItemsModel?> = MutableLiveData(null)
         coEvery { getProductDetailsUseCase.execute(productId) } returns liveDataMock
 

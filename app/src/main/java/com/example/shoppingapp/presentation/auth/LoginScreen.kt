@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,7 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -56,9 +60,14 @@ fun LoginScreen(
             // Fetch the role after successful login
             viewModel.fetchUserRoleFromSharedPrefs()
         } else {
+            Log.d("LoginScreen", "Login failed, exception: ${result.exceptionOrNull()}") // Log here to confirm failure path is taken
+
             val exception = result.exceptionOrNull()
             errorMessage = exception?.message ?: context.getString(R.string.Login_failed_txt)
+            Log.d("LoginScreen", "Setting showDialog to true with message: $errorMessage")
+
             showDialog = true
+
         }
     }
 
@@ -95,7 +104,8 @@ fun LoginScreen(
                 value = email,
                 onValueChange = { email = it },
                 placeholder = context.getString(R.string.Email_txt),
-                label = context.getString(R.string.Email_txt)
+                label = context.getString(R.string.Email_txt),
+                modifier = Modifier.testTag("Email")
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -105,7 +115,8 @@ fun LoginScreen(
                 onValueChange = { password = it },
                 placeholder = context.getString(R.string.Password_txt),
                 label = context.getString(R.string.Password_txt),
-                isPassword = true
+                isPassword = true,
+                modifier = Modifier.testTag("Password")
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -113,7 +124,9 @@ fun LoginScreen(
             Text(
                 modifier = Modifier
                     .align(Alignment.End)
-                    .clickable { navHostController.navigate("forgetPass") },
+                    .clickable { navHostController.navigate("forgetPass") }
+                    .testTag("ForgotPassword")
+                    .semantics { contentDescription = "Forgot Password button" },
                 text = context.getString(R.string.Forget_pass_txt),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -122,30 +135,38 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             if (isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.testTag("loading_indicator"))
             } else {
                 CommonButton(
+                    modifier = Modifier.fillMaxWidth().testTag("LoginButton"),
+                    testTag = "LoginButton",
                     text = context.getString(R.string.Login_btn),
                     onClick = { viewModel.login(email, password) },
-                    modifier = Modifier.fillMaxWidth()
                 )
+
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             if (showDialog) {
+                Log.d("LoginScreen 150", "Displaying error dialog with message: $errorMessage")
+
                 CommonDialog(
                     showDialog = showDialog,
                     onDismiss = { showDialog = false },
                     title = context.getString(R.string.Error_txt),
                     message = errorMessage,
                     confirmButtonText = context.getString(R.string.Ok_txt),
-                    onConfirm = { showDialog = false }
+                    onConfirm = { showDialog = false },
+                    modifier = Modifier.testTag("ErrorDialog")
                 )
             }
 
             Text(
-                modifier = Modifier.clickable { navHostController.navigate("signUp") },
+                modifier = Modifier
+                    .clickable { navHostController.navigate("signUp") }
+                    .testTag("SignUp")
+                    .semantics { contentDescription = "Sign Up button" },
                 text = context.getString(R.string.Sign_up_txt),
                 color = MaterialTheme.colorScheme.primary
             )

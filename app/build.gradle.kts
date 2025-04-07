@@ -64,11 +64,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.testing)
     implementation(libs.firebase.storage.ktx)
-    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation ("com.google.accompanist:accompanist-pager:0.24.10-beta")
+    implementation (libs.androidx.constraintlayout.compose)
+    implementation (libs.accompanist.pager)
 
     // Coil
-    implementation ("io.coil-kt:coil-compose:2.0.0")
+    implementation (libs.coil.compose)
     implementation(libs.firebase.storage)
     // implementation(libs.androidx.constraintlayout)
 
@@ -91,15 +91,16 @@ dependencies {
   //  implementation ("com.google.firebase:firebase-appcheck-safetynet:17.0.0")
 
     // Room Database
-    implementation ("androidx.room:room-runtime:2.5.0")
+   // implementation ("androidx.room:room-runtime:2.5.0")
     // Room Database dependencies
-     implementation ("androidx.room:room-ktx:2.5.0")
-    kapt ("androidx.room:room-compiler:2.5.0")
+    // implementation ("androidx.room:room-ktx:2.5.0")
+   // kapt ("androidx.room:room-compiler:2.5.0")
 
 
 
     //Navigation
     implementation(libs.androidx.navigation.compose)
+
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -116,32 +117,35 @@ dependencies {
     implementation(libs.koin.androidx.compose)
 
     // Testing dependencies for Unit Tests and UI Tests
-    testImplementation ("junit:junit:4.13.2")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+    testImplementation (libs.junit)
+    androidTestImplementation (libs.androidx.junit.v113)
+    androidTestImplementation (libs.androidx.espresso.core.v340)
     testImplementation ("org.mockito:mockito-core:3.12.4")
-    testImplementation ("io.mockk:mockk:1.13.2")
-    androidTestImplementation ("io.mockk:mockk-android:1.12.0")  // For Android tests
+    testImplementation (libs.mockk)
+    androidTestImplementation (libs.mockk.android)  // For Android tests
+    testImplementation ("org.mockito:mockito-inline:3.11.2")
 
 
-    androidTestImplementation ("org.mockito:mockito-android:3.12.4")
-    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")  // Use the latest version
+    androidTestImplementation (libs.mockito.android)
+    testImplementation (libs.mockito.kotlin)  // Use the latest version
 
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2") // For coroutines testing
-    testImplementation ("androidx.arch.core:core-testing:2.1.0")  // For LiveData testing
+    testImplementation (libs.kotlinx.coroutines.test) // For coroutines testing
+    testImplementation (libs.androidx.core.testing)  // For LiveData testing
     testImplementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
 
 
-    testImplementation ("org.jetbrains.kotlin:kotlin-test:1.7.20") // For assertion functions like assertFailsWith
-    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation (libs.kotlin.test) // For assertion functions like assertFailsWith
+    testImplementation (libs.junit.jupiter.api)
 
-    implementation ("com.github.bumptech.glide:glide:4.15.1")  // Or the latest version
+    implementation (libs.glide)  // Or the latest version
 //    kapt 'com.github.bumptech.glide:compiler:4.15.1'
 
     // Robolectric for unit tests
-    testImplementation ("org.robolectric:robolectric:4.10.3")
+    testImplementation (libs.robolectric)
 
-
+// Compose test rules
+    androidTestImplementation (libs.androidx.ui.test)
+    androidTestImplementation (libs.ui.test.junit4)
 
 
 }

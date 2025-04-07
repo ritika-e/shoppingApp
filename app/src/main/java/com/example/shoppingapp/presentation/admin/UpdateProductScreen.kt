@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.shoppingapp.R
 import com.example.shoppingapp.domain.model.ProductList
 import org.koin.androidx.compose.koinViewModel
 
@@ -61,7 +62,7 @@ fun UpdateProductScreen(
     val context = LocalContext.current
 
     if (product == null) {
-        Text("Product not found", style = MaterialTheme.typography.headlineSmall)
+        Text(context.getString(R.string.product_not_found), style = MaterialTheme.typography.headlineSmall)
         return
     }
 
@@ -82,10 +83,12 @@ fun UpdateProductScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Update Product") },
+                title = { Text(context.getString(R.string.update_product_btn)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = context.getString(R.string.Back_txt)
+                        )
                     }
                 }
             )
@@ -94,7 +97,9 @@ fun UpdateProductScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 // Show existing image if available
                 product?.picUrl?.let {
-                    Image(painter = rememberImagePainter(it), contentDescription = "Product Image", modifier = Modifier.size(100.dp))
+                    Image(painter = rememberImagePainter(it),
+                        contentDescription = context.getString(R.string.product_image),
+                        modifier = Modifier.size(100.dp))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -103,7 +108,7 @@ fun UpdateProductScreen(
                 TextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Product Title") },
+                    label = { Text(context.getString(R.string.product_title)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -112,7 +117,7 @@ fun UpdateProductScreen(
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Product Description") },
+                    label = { Text(context.getString(R.string.product_desc_txt)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -121,7 +126,7 @@ fun UpdateProductScreen(
                 TextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Product Price") },
+                    label = { Text(context.getString(R.string.product_price_txt)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -130,12 +135,14 @@ fun UpdateProductScreen(
 
                 // Image upload button
                 Button(onClick = { launcher.launch("image/*") }) {
-                    Text("Choose Image")
+                    Text(context.getString(R.string.choose_image_txt))
                 }
 
                 // Show selected image as a preview
                 selectedImageUri.value?.let {
-                    Image(painter = rememberImagePainter(it), contentDescription = "Selected Image", modifier = Modifier.size(100.dp))
+                    Image(painter = rememberImagePainter(it),
+                        contentDescription = context.getString(R.string.selected_image_txt),
+                        modifier = Modifier.size(100.dp))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -154,14 +161,15 @@ fun UpdateProductScreen(
 
                         // Call the ViewModel to update the product
                         productViewModel.updateProduct(productId, updatedProduct)
+                        navController.popBackStack()
                        // navController.navigateUp()
-                        navController.navigate("productManagement") {
+                       /* navController.navigate("productManagement") {
                             popUpTo("updateProductScreen") { inclusive = true }
-                        }
+                        }*/
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Update Product")
+                    Text(context.getString(R.string.update_product_btn))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
