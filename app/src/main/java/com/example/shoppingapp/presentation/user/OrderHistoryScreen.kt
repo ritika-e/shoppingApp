@@ -113,7 +113,7 @@ fun OrderHistoryScreen(
 fun OrderItemView(navHostController: NavHostController,
     order: Order) {
     val context:Context = LocalContext.current
-    // Convert timestamp to a human-readable date
+    // Convert timestamp to a common date
     val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
     val formattedDate = try {
         val timestamp = order.orderDate.toLongOrNull()
@@ -121,14 +121,6 @@ fun OrderItemView(navHostController: NavHostController,
     } catch (e: Exception) {
         context.getString(R.string.invalid_dates)
     }
-
-    // Highlight order status (Accept, Delivered, Reject.)
-   /* val statusColor = when (order.status.lowercase()) {
-        "Accept" -> Color.Blue
-        "Delivered" -> Color.Green
-        "Reject" -> Color.Red
-        else -> Color.Gray
-    }*/
 
     val statusColor = when (order.status) {
         "Accept" -> Color(0xFFFF9800)  // Orange
@@ -146,27 +138,26 @@ fun OrderItemView(navHostController: NavHostController,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Order ID: ${order.orderId}",
+                text = context.getString(R.string.orderid)+" ${order.orderId}",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Total Amount: $${order.totalAmount}",
+                text = context.getString(R.string.totalamt)+" $${order.totalAmount}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Status: ${order.status}",
+                    text = context.getString(R.string.statusTxt)+": ${order.status}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = statusColor,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                // Optional: Add a small icon indicating order status
-                Icon(
+                 Icon(
                     imageVector = Icons.Filled.Info,
                     contentDescription = context.getString(R.string.order_status),
                     tint = statusColor,
@@ -175,7 +166,7 @@ fun OrderItemView(navHostController: NavHostController,
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Order Date: $formattedDate",
+                text = context.getString(R.string.order_date)+" $formattedDate",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )

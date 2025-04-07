@@ -78,10 +78,15 @@
     <string name="no_order">No order found.</string>
     <string name="unknown_error">Unknown error</string>
     <string name="order_id">Order ID: %1$s</string>
+    <string name="orderid">Order ID:</string>
     <string name="status">Status: %1$s</string>
+    <string name="statusTxt">Status:</string>
     <string name="total_amt">Total Amount: $%1$.2f</string>
-    <string name="total">Total: $%1$.2f</string>
-    <string name="order_date">Order Date: $%1$</string>
+    <string name="totalamt">Total Amount: </string>
+   <!-- <string name="total">Total: $%1$.2f</string>
+    <string name="order_date">Order Date: $%1$</string> -->
+    <string name="total">Total:</string>
+    <string name="order_date">Order Date:</string>
     <string name="items">Items:</string>
     <string name="invoice">Invoice</string>
     <string name="customer_list">Customer List</string>
@@ -124,5 +129,11 @@
     <string name="add_more_btn">Add More Items</string>
     <string name="reset_dialog_title">Check Your Email!</string>
     <string name="reset_dialog_title_fail">Password Reset Failed!</string>
+    <string name="update_Profile">Update Profile</string>
+    <string name="address">Address</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="role">Role</string>
+    <string name="profile_update_successfully">Profile updated successfully</string>
+    <string name="profile_update_failed">Failed to update profile</string>
 
 </resources>

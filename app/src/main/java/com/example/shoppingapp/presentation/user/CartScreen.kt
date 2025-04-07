@@ -137,11 +137,9 @@ fun CartScreen(
                         }
                     }
                 }
-                // Ensure LazyColumn is properly constrained in height
-                if (showInvoice && cartItems?.isNotEmpty() == true) {
+                 if (showInvoice && cartItems?.isNotEmpty() == true) {
                     item {
-                        // Make sure the invoice is properly constrained with height or other limits
-                        Box(modifier = Modifier.heightIn(min = 200.dp, max = 600.dp).fillMaxWidth()) {
+                         Box(modifier = Modifier.heightIn(min = 200.dp, max = 600.dp).fillMaxWidth()) {
                             cartItems?.let { InvoiceView(cartItems = it) }
                         }
                     }

@@ -86,49 +86,4 @@ class FirebaseProductRepositoryImpl : FirebaseProductRepository {
             false // If error occurs
         }
     }
-
-
-    /* fun saveProductDataToDatabase(productId: String, imageUrl: String,productData: ProductList) {
-         val databaseRef = FirebaseDatabase.getInstance().reference
-         val productRef = databaseRef.child("products").child(productId) // Reference to the "products" node
-
-         // Create a product object with the data
-         val productData = mapOf(
-             "productId" to productId,
-             "name" to productData.title, // Product name
-             "price" to productData.price, // Product price
-             "description" to productData.description,
-             "imageUrl" to imageUrl // Add the image URL here
-         )
-
-         // Save the product data in the Firebase Realtime Database
-         productRef.setValue(productData).addOnCompleteListener { task ->
-             if (task.isSuccessful) {
-                 Log.d("Firebase", "Product data saved successfully")
-             } else {
-                 Log.e("Firebase", "Failed to save product data", task.exception)
-             }
-         }
-     }
- */
-    /*  override suspend fun addProduct(product: ProductList, onComplete: (Boolean) -> Unit) {
-          try {
-              databaseReference.child(product.productId).setValue(product).await()
-              onComplete(true)
-          } catch (e: Exception) {
-              onComplete(false)
-          }
-      }*/
-
-   /* override suspend fun updateProduct(product: ProductList) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteProduct(productId: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getAllProducts(): List<ProductList> {
-        TODO("Not yet implemented")
-    }*/
 }

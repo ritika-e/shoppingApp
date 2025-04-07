@@ -19,12 +19,6 @@
       <SelectionState runConfigName="testDialogDismissalOnOkButtonClick()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testEmailInputFieldIsDisplayed()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testEmailValidationForInvalidFormat()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="testLoadingIndicatorWhileResetting()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

@@ -469,6 +469,8 @@ fun BottomMenu(modifier: Modifier,onItemClick: (String) -> Unit){
             text = context.getString(R.string.Orders_txt), onItemClick = { onItemClick("order_history") })
         BottomMenuItem(icon = Icons.Default.Phone,
             text = context.getString(R.string.support_txt), onItemClick = { onItemClick("supportScreen") })
+        BottomMenuItem(icon = Icons.Default.Person,
+            text = context.getString(R.string.Profile_txt), onItemClick = { onItemClick("userProfile") })
     }
 }
 
