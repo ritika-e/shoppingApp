@@ -161,10 +161,11 @@ fun UpdateProductScreen(
 
                         // Call the ViewModel to update the product
                         productViewModel.updateProduct(productId, updatedProduct)
+                        navController.popBackStack()
                        // navController.navigateUp()
-                        navController.navigate("productManagement") {
+                       /* navController.navigate("productManagement") {
                             popUpTo("updateProductScreen") { inclusive = true }
-                        }
+                        }*/
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

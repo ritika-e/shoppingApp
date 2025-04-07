@@ -93,9 +93,11 @@ fun AdminDashboardScreen(navHostController: NavHostController = rememberNavContr
         .fillMaxSize()){
         Column {
             GreetingSection(navHostController)
-            ChipSection(chips = listOf("Total Orders: $totalOrders",
-                "Delivered Orders: $deliverdOrders","Pending Orders: $pendingOrders",
-                "Accepted Orders: $acceptedOrders","Rejected Orders: $rejectedOrders"))
+            ChipSection(chips = listOf(context.getString(R.string.total_Orders)+ ": $totalOrders",
+                context.getString(R.string.delivered_Orders) +": $deliverdOrders",
+                context.getString(R.string.pending_Orders)+": $pendingOrders",
+                context.getString(R.string.accepted_Orders)+": $acceptedOrders",
+               context.getString(R.string.rejected_Orders)+ ": $rejectedOrders"))
             FeaturesSection(features = listOf(
                 Feature(
                     title = context.getString(R.string.cust_txt),
@@ -233,9 +235,10 @@ fun ChipSection(
 
 @Composable
 fun FeaturesSection(features: List<Feature>,navHostController: NavHostController){
+    var context:Context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Features",
+            text = context.getString(R.string.features),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(15.dp)
         )
@@ -285,6 +288,7 @@ fun FeatureItem(
              lineTo(-100f, height.toFloat() + 100f)
             close()
          }
+        var context:Context = LocalContext.current
 
         //Light Colored
         val lightPoint1 = Offset(0f,height * 0.35f)
@@ -332,7 +336,7 @@ fun FeatureItem(
                 .align(Alignment.BottomStart)
                 .padding(start = 10.dp, bottom = 10.dp))
 
-        Text(text = "Start",
+        Text(text = context.getString(R.string.click_to_open),
             color = Color.White,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,

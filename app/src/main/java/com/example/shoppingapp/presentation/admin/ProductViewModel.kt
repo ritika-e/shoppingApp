@@ -17,6 +17,7 @@ import com.example.shoppingapp.domain.usecase.admin.DeleteProductUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetAllProductsUseCase
 import com.example.shoppingapp.domain.usecase.admin.GetProductByIdUseCase
 import com.example.shoppingapp.domain.usecase.admin.UpdateProductUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 open class ProductViewModel(
@@ -72,9 +73,13 @@ open class ProductViewModel(
     open  fun getProducts() {
        viewModelScope.launch {
            _isLoading.value = true
+           _productsList.value = emptyList()
+           delay(500)
            val result = getAllProductsUseCase.execute()
            _isLoading.value = false
            _productsList.value = result
+           Log.d("ProductViewModel", "Fetched Products: ${result.size}")
+
        }
    }
 
@@ -83,6 +88,7 @@ open class ProductViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             updateProductUseCase.execute(productId, product)
+            getProducts()
             _isLoading.value = false
         }
     }
@@ -90,6 +96,7 @@ open class ProductViewModel(
     open fun deleteProduct(productId: Int) {
         viewModelScope.launch {
             deleteProductUseCase.execute(productId)
+            getProducts()
         }
     }
 }

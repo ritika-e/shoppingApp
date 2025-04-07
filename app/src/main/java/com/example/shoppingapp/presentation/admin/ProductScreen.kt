@@ -54,6 +54,7 @@ fun ProductScreen(
 
     // Fetch the product data when the screen is displayed
     LaunchedEffect(productId) {
+        Log.e("ProductScreen", "Fetching product data for productId $productId")
         productViewModel.getProductById(productId)
     }
 
@@ -93,15 +94,18 @@ fun ProductScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp) // Set a height limit
-                            .clip(RoundedCornerShape(8.dp)) // Optional: Add corner radius for the image
-                            .padding(8.dp) // Optional: Add padding around the image
+                            .clip(RoundedCornerShape(8.dp))
+                            .padding(8.dp)
                     )
                 }
 
                 // Product Details
-                Text("Name: ${product!!.title}", style = MaterialTheme.typography.headlineSmall)
-                Text("Price: $${product!!.price}", style = MaterialTheme.typography.bodyMedium)
-                Text("Description: ${product!!.description}", style = MaterialTheme.typography.bodyMedium)
+                Text(context.getString(R.string.product_name_txt)+": ${product!!.title}",
+                    style = MaterialTheme.typography.headlineSmall)
+                Text(context.getString(R.string.product_price_txt)+": ${product!!.price}",
+                    style = MaterialTheme.typography.labelLarge)
+                Text(context.getString(R.string.product_desc_txt)+": ${product!!.description}",
+                    style = MaterialTheme.typography.bodyMedium)
 
                 Spacer(modifier = Modifier.height(16.dp))
 

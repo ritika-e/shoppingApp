@@ -54,6 +54,7 @@
     <string name="add_product_txt">Add Product</string>
     <string name="product_name_txt">Product Name</string>
     <string name="product_desc_txt">Product Description</string>
+    <string name="product_id">Product Id</string>
     <string name="product_price_txt">Product Price (in $)</string>
     <string name="product_image_txt">Select Product Image</string>
     <string name="choose_image_txt">Choose Image</string>
@@ -135,5 +136,12 @@
     <string name="role">Role</string>
     <string name="profile_update_successfully">Profile updated successfully</string>
     <string name="profile_update_failed">Failed to update profile</string>
+    <string name="click_to_open">Click to Open</string>
+    <string name="features">Features</string>
+    <string name="total_Orders">Total Orders</string>
+    <string name="delivered_Orders">Delivered Orders</string>
+    <string name="pending_Orders">Pending Orders</string>
+    <string name="accepted_Orders">Accepted Orders</string>
+    <string name="rejected_Orders">Rejected Orders</string>
 
 </resources>
